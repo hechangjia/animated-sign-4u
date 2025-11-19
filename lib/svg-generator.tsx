@@ -64,7 +64,10 @@ export function generateSVG(
   state: SignatureState,
   paths: PathData[],
   viewBox: { x: number; y: number; w: number; h: number },
+  options?: { staticRender?: boolean },
 ): string {
+  const staticRender = options?.staticRender ?? false;
+
   const width = viewBox.w;
   const height = viewBox.h;
   const padding = Math.max(
@@ -137,7 +140,9 @@ export function generateSVG(
   paths.forEach((p, i) => {
     const duration = (p.len / 300) / speed;
     const delay = currentDelay;
-    currentDelay += duration * 0.7; // Overlap for smooth flow
+    if (!staticRender) {
+      currentDelay += duration * 0.7; // Overlap for smooth flow
+    }
 
     const fill = state.fillMode === "single"
       ? state.fill1
@@ -152,6 +157,12 @@ export function generateSVG(
       state.useShadow ? "url(#shadow)" : "",
     ].filter(Boolean).join(" ");
 
+    const strokeDashoffset = staticRender ? 0 : p.len;
+    const fillOpacity = staticRender ? 1 : 0;
+    const animationStyle = staticRender ? "" : `animation: 
+            draw-${i} ${duration}s ease-out forwards ${delay}s, 
+            fill-fade-${i} 0.8s ease-out forwards ${delay + duration * 0.6}s;`;
+
     pathElements += `
       <path 
         d="${p.d}" 
@@ -164,11 +175,9 @@ export function generateSVG(
         class="sig-path"
         style="
           stroke-dasharray: ${p.len}; 
-          stroke-dashoffset: ${p.len}; 
-          fill-opacity: 0;
-          animation: 
-            draw-${i} ${duration}s ease-out forwards ${delay}s, 
-            fill-fade-${i} 0.8s ease-out forwards ${delay + duration * 0.6}s;
+          stroke-dashoffset: ${strokeDashoffset}; 
+          fill-opacity: ${fillOpacity};
+          ${animationStyle}
         "
       />
     `;
@@ -194,14 +203,16 @@ export function generateSVG(
     }" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
   }
 
-  // Generate keyframes for each path
+  // Generate keyframes for each path (skip for static renders)
   let keyframes = "";
-  paths.forEach((p, i) => {
-    keyframes += `
-      @keyframes draw-${i} { to { stroke-dashoffset: 0; } }
-      @keyframes fill-fade-${i} { to { fill-opacity: 1; } }
-    `;
-  });
+  if (!staticRender) {
+    paths.forEach((p, i) => {
+      keyframes += `
+        @keyframes draw-${i} { to { stroke-dashoffset: 0; } }
+        @keyframes fill-fade-${i} { to { fill-opacity: 1; } }
+      `;
+    });
+  }
 
   return `
     <svg 

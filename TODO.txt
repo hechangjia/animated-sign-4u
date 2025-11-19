@@ -41,10 +41,12 @@ http://localhost:3000/api/sign?text=Signature&font=great-vibes&fill=multi
 这个是我直接从 code box 中的 api 处 copy 出来的, 我其实已经配置了很多颜色了, 比如我们的 rainbow 颜色,  但是 生成的 api url 却没有这些颜色...
 当我直接访问http://localhost:3000/api/sign?text=Signature&font=great-vibes&fill=multi时, 得到的是我们的默认颜色, 而不是我为每个字符串单独配置的颜色....需要修复.
 
-
-当前项目进度以及问题:
 1. PNG format is not implemented yet, 需要实现
    -http://localhost:3000/api/sign?text=Signature&font=great-vibes&format=png 得到的是纯白的背景..没有签名..需要修复
+
+
+当前项目进度以及问题:
+
 2. 需要支持用户自定义背景 size (长*宽), 默认的背景size 就是 auto, 也就是当前的逻辑. 
    - 用户的自定义的话, 就按照用户得来.
 3. 需要实现 mobile 布局

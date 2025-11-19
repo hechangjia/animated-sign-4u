@@ -190,10 +190,12 @@ export async function GET(req: NextRequest): Promise<Response> {
             });
         }
 
-        const svg = generateSVG(state, paths, viewBox);
-
         if (format === "png") {
-            const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
+            const staticSvg = generateSVG(state, paths, viewBox, {
+                staticRender: true,
+            });
+            const pngBuffer = await sharp(Buffer.from(staticSvg)).png()
+                .toBuffer();
             const pngArray = new Uint8Array(pngBuffer);
 
             return new Response(pngArray, {
@@ -204,6 +206,8 @@ export async function GET(req: NextRequest): Promise<Response> {
                 },
             });
         }
+
+        const svg = generateSVG(state, paths, viewBox);
 
         return new Response(svg, {
             status: 200,
