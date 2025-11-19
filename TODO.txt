@@ -11,8 +11,7 @@
 /Users/unic/dev/projs/ts/animated-sign/docs/functionalities.md
 
 ----
-
-当前项目进度以及问题:
+完成的功能
 
 1. 当前项目还没有进行测试, 保证功能的准确性
 2. 当前的项目还存在许多问题
@@ -37,6 +36,27 @@
 4. 我希望sidebar 的每个 section 都是可以被折叠起来的, 按section折叠即可
 5. 还需要按照 @design.md 设计好 api , 并且实现
 请你再次仔细的查看原始的 html, 理清楚逻辑和代码实现, 然后修复和完善当前的实现.
+
+
+当前项目进度以及问题:
+1. PNG format is not implemented yet, 需要实现
+2. 需要支持用户自定义背景 size (长*宽), 默认的背景size 就是 auto, 也就是当前的逻辑. 
+   - 用户的自定义的话, 就按照用户得来.
+3. 需要实现 mobile 布局
+    - 目前的 mobile 布局只能看到 sidebar
+    - 我希望的是 mobile 布局时, sidebar 变成 底部的抽屉. 用户点击抽屉的 trigger 后弹出, 向上挤压底部空间.
+    从而 mobile 变为 三 栏, 
+   topbar # 而 code box 变成一个 button 放置于 topbar, 用户点击的话, 则弹出覆盖层, 覆盖当前页面, 从而
+   preview
+   drawer # sidebar 变成 drawer, 而 drawer 内部是一个水平的滚动布局,
+   四个模块 
+    content & font | parameters | quick themes | style & color
+   即用户右划从  content & font 转到 parameters, 再右划则转到 quick themes, 再右划则转到 style & color, 再右划则转到 content & font
+   依次循环.
+4. top bar 上的按钮也需要做 mobile 适配, 减少文字, 避免过于拥挤等问题
+5. 整理项目中的文件命名 / 导出风格，做一点小的 API 清理（比如统一 Props 命名、去掉不必要的 React.FC 等），让整体更统一
+6. 需要为整个界面实现 dark/light theme. 并且确保主题切换功能正常.
+7. 需要实现 i18n, 起码包含 英文/中文
 
 1. 仔细阅读这个计划/重构/实现文档. 理清楚逻辑, 了解清楚需求, 仔细认真的对比代码. 理解当前的进度.
 2. 然后按照其描述完成任务接下来就请继续进行实现/迁移/重构, 大改也可以的.可以接受大范围的重构。
