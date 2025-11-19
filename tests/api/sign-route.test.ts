@@ -86,4 +86,57 @@ describe("GET /api/sign", () => {
         expect(res.status).toBe(501);
         expect(text).toContain("PNG format is not implemented yet");
     });
+
+    it("handles missing text with theme and format=json", async () => {
+        const { GET } = await import("@/app/api/sign/route");
+
+        const req = new Request(
+            "http://localhost/api/sign?theme=pepsi&format=json",
+        );
+        const res = await GET(req as any);
+        const json = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(Array.isArray(json.paths)).toBe(true);
+        expect(json.paths.length).toBeGreaterThan(0);
+        expect(json.viewBox).toBeDefined();
+    });
+
+    it("handles very long text inputs", async () => {
+        const { GET } = await import("@/app/api/sign/route");
+
+        const longText = "Signature-" + "X".repeat(500);
+        const req = new Request(
+            `http://localhost/api/sign?text=${
+                encodeURIComponent(longText)
+            }&format=json`,
+        );
+        const res = await GET(req as any);
+        const json = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(Array.isArray(json.paths)).toBe(true);
+        expect(json.paths.length).toBeGreaterThan(0);
+        expect(json.viewBox.w).toBeGreaterThan(0);
+        expect(json.viewBox.h).toBeGreaterThan(0);
+    });
+
+    it("returns JSON correctly for pepsi/ink/jade/rainbow themes", async () => {
+        const { GET } = await import("@/app/api/sign/route");
+
+        const themes = ["pepsi", "ink", "jade", "rainbow"] as const;
+
+        for (const theme of themes) {
+            const req = new Request(
+                `http://localhost/api/sign?text=ThemeTest&theme=${theme}&format=json`,
+            );
+            const res = await GET(req as any);
+            const json = await res.json();
+
+            expect(res.status).toBe(200);
+            expect(Array.isArray(json.paths)).toBe(true);
+            expect(json.paths.length).toBeGreaterThan(0);
+            expect(json.viewBox).toBeDefined();
+        }
+    });
 });
