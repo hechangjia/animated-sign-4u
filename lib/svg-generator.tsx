@@ -70,6 +70,12 @@ export function generateSVG(
 
   const width = viewBox.w;
   const height = viewBox.h;
+  const outputWidth = state.bgSizeMode === "custom" && state.bgWidth
+    ? state.bgWidth
+    : width;
+  const outputHeight = state.bgSizeMode === "custom" && state.bgHeight
+    ? state.bgHeight
+    : height;
   const padding = Math.max(
     0,
     Math.min(state.cardPadding ?? 0, Math.min(width, height) / 4),
@@ -218,8 +224,8 @@ export function generateSVG(
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="${viewBox.x} ${viewBox.y} ${width} ${height}"
-      width="${width}"
-      height="${height}"
+      width="${outputWidth}"
+      height="${outputHeight}"
       style="background-color: transparent; border-radius: ${state.borderRadius}px;"
     >
       <defs>

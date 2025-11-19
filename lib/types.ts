@@ -1,6 +1,7 @@
 export type FillMode = "single" | "gradient" | "multi";
 export type TextureType = "none" | "grid" | "dots" | "lines" | "cross";
 export type BgMode = "solid" | "gradient";
+export type BgSizeMode = "auto" | "custom";
 
 export interface SignatureState {
   text: string;
@@ -15,6 +16,9 @@ export interface SignatureState {
   bgTransparent: boolean;
   borderRadius: number;
   cardPadding: number;
+  bgSizeMode: BgSizeMode;
+  bgWidth: number | null;
+  bgHeight: number | null;
 
   // Stroke
   stroke: string;

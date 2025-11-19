@@ -248,6 +248,75 @@ export function StyleColorSection(
                             className="**:data-[slot=slider-track]:bg-slate-200 **:data-[slot=slider-track]:h-2 **:data-[slot=slider-range]:bg-indigo-500 **:data-[slot=slider-thumb]:bg-white **:data-[slot=slider-thumb]:border-2 **:data-[slot=slider-thumb]:border-indigo-500 **:data-[slot=slider-thumb]:shadow-lg **:data-[slot=slider-thumb]:w-5 **:data-[slot=slider-thumb]:h-5"
                         />
                     </div>
+
+                    {/* Background Size */}
+                    <div className="pt-3 border-t mt-2 space-y-2">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-xs text-muted-foreground">
+                                Background Size
+                            </Label>
+                            <div className="flex bg-muted p-0.5 rounded-lg text-[11px]">
+                                {(["auto", "custom"] as const).map((mode) => (
+                                    <button
+                                        key={mode}
+                                        onClick={() =>
+                                            updateState({ bgSizeMode: mode })}
+                                        className={cn(
+                                            "px-2 py-0.5 rounded-md capitalize",
+                                            state.bgSizeMode === mode
+                                                ? "bg-background shadow-sm text-foreground"
+                                                : "text-muted-foreground hover:text-foreground",
+                                        )}
+                                    >
+                                        {mode}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {state.bgSizeMode === "custom" && (
+                            <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+                                <div className="flex flex-col gap-1">
+                                    <span>Width</span>
+                                    <input
+                                        type="number"
+                                        min={100}
+                                        max={2000}
+                                        value={state.bgWidth ?? ""}
+                                        onChange={(e) => {
+                                            const v = Number(e.target.value);
+                                            updateState({
+                                                bgWidth: Number.isFinite(v)
+                                                    ? v
+                                                    : null,
+                                                bgSizeMode: "custom",
+                                            });
+                                        }}
+                                        className="h-7 px-2 rounded border border-border bg-background text-xs"
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span>Height</span>
+                                    <input
+                                        type="number"
+                                        min={100}
+                                        max={2000}
+                                        value={state.bgHeight ?? ""}
+                                        onChange={(e) => {
+                                            const v = Number(e.target.value);
+                                            updateState({
+                                                bgHeight: Number.isFinite(v)
+                                                    ? v
+                                                    : null,
+                                                bgSizeMode: "custom",
+                                            });
+                                        }}
+                                        className="h-7 px-2 rounded border border-border bg-background text-xs"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Stroke & Fill */}

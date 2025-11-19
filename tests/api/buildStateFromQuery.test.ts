@@ -57,4 +57,18 @@ describe("buildStateFromQuery", () => {
         expect(state.charColors[0]).toBe("#ff0000");
         expect(state.charColors[1]).toBe("#00ff00");
     });
+
+    it("parses background size parameters", () => {
+        const params = new URLSearchParams({
+            bgSizeMode: "custom",
+            bgWidth: "800",
+            bgHeight: "400",
+        });
+
+        const state = buildStateFromQuery(params);
+
+        expect(state.bgSizeMode).toBe("custom");
+        expect(state.bgWidth).toBe(800);
+        expect(state.bgHeight).toBe(400);
+    });
 });

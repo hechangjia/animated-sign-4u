@@ -47,6 +47,27 @@ export function buildStateFromQuery(params: URLSearchParams): SignatureState {
         }
     }
 
+    const bgSizeMode = params.get("bgSizeMode");
+    if (bgSizeMode === "auto" || bgSizeMode === "custom") {
+        state.bgSizeMode = bgSizeMode as any;
+    }
+
+    const bgWidthParam = params.get("bgWidth");
+    if (bgWidthParam) {
+        const v = Number(bgWidthParam);
+        if (Number.isFinite(v) && v > 0) {
+            state.bgWidth = v;
+        }
+    }
+
+    const bgHeightParam = params.get("bgHeight");
+    if (bgHeightParam) {
+        const v = Number(bgHeightParam);
+        if (Number.isFinite(v) && v > 0) {
+            state.bgHeight = v;
+        }
+    }
+
     const bgParam = params.get("bg");
     if (bgParam) {
         if (bgParam === "transparent") {

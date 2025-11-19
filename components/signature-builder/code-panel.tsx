@@ -42,6 +42,11 @@ export function CodePanel({ svgCode, state }: CodePanelProps) {
       else if (state.bg !== "#ffffff") {
         params.set("bg", state.bg.replace("#", ""));
       }
+      if (state.bgSizeMode === "custom") {
+        params.set("bgSizeMode", "custom");
+        if (state.bgWidth) params.set("bgWidth", String(state.bgWidth));
+        if (state.bgHeight) params.set("bgHeight", String(state.bgHeight));
+      }
       if (state.fillMode === "multi" && state.text) {
         const colors = state.text.split("").map((_, idx) =>
           (state.charColors[idx] || state.fill1).replace("#", "")
