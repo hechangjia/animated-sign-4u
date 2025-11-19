@@ -14,6 +14,7 @@ export interface SignatureState {
   bgMode: BgMode;
   bgTransparent: boolean;
   borderRadius: number;
+  cardPadding: number;
 
   // Stroke
   stroke: string;

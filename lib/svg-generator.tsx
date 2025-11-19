@@ -67,6 +67,10 @@ export function generateSVG(
 ): string {
   const width = viewBox.w;
   const height = viewBox.h;
+  const padding = Math.max(
+    0,
+    Math.min(state.cardPadding ?? 0, Math.min(width, height) / 4),
+  );
 
   // Generate Defs
   let defs = "";
@@ -183,8 +187,11 @@ export function generateSVG(
   // Texture Overlay - fix pattern ID reference
   let textureOverlay = "";
   if (state.texture && state.texture !== "none") {
-    textureOverlay =
-      `<rect x="${viewBox.x}" y="${viewBox.y}" width="${width}" height="${height}" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
+    textureOverlay = `<rect x="${viewBox.x + padding}" y="${
+      viewBox.y + padding
+    }" width="${width - padding * 2}" height="${
+      height - padding * 2
+    }" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
   }
 
   // Generate keyframes for each path

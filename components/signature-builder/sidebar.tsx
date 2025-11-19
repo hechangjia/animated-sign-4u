@@ -365,112 +365,118 @@ export function Sidebar({ state, updateState, onFontUpload }: SidebarProps) {
               </div>
             </div>
 
-            {/* Stroke */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs font-medium text-muted-foreground">
-                  Stroke Color
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={state.strokeEnabled}
-                    onCheckedChange={(c) => updateState({ strokeEnabled: c })}
-                    id="stroke-enable"
-                  />
-                  <Label
-                    htmlFor="stroke-enable"
-                    className="text-[10px] text-muted-foreground"
-                  >
-                    Enable
+            {/* Stroke & Fill */}
+            <div className="mt-3 p-3 bg-card border rounded-xl shadow-sm space-y-3">
+              {/* Stroke */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs font-medium text-muted-foreground">
+                    Stroke Color
                   </Label>
-                </div>
-              </div>
-              <div
-                className={cn(
-                  "transition-opacity",
-                  !state.strokeEnabled && "opacity-50",
-                )}
-              >
-                <ColorPicker
-                  value={state.stroke}
-                  onChange={(c) => updateState({ stroke: c })}
-                />
-              </div>
-            </div>
-
-            {/* Fill */}
-            <div className="space-y-3">
-              <Label className="text-xs font-medium text-muted-foreground">
-                Fill Mode
-              </Label>
-              <div className="flex bg-muted p-1 rounded-lg">
-                {(["single", "gradient", "multi"] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => updateState({ fillMode: mode })}
-                    className={cn(
-                      "flex-1 py-1.5 text-xs font-medium rounded-md transition-all capitalize",
-                      state.fillMode === mode
-                        ? "bg-background shadow-sm text-foreground"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {mode}
-                  </button>
-                ))}
-              </div>
-
-              {state.fillMode === "single" && (
-                <ColorPicker
-                  value={state.fill1}
-                  onChange={(c) => updateState({ fill1: c })}
-                />
-              )}
-
-              {state.fillMode === "gradient" && (
-                <div className="flex gap-2 items-center">
-                  <div className="flex-1">
-                    <ColorPicker
-                      value={state.fill1}
-                      onChange={(c) => updateState({ fill1: c })}
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={state.strokeEnabled}
+                      onCheckedChange={(c) => updateState({ strokeEnabled: c })}
+                      id="stroke-enable"
                     />
-                  </div>
-                  <span className="text-muted-foreground">→</span>
-                  <div className="flex-1">
-                    <ColorPicker
-                      value={state.fill2}
-                      onChange={(c) => updateState({ fill2: c })}
-                    />
+                    <Label
+                      htmlFor="stroke-enable"
+                      className="text-[10px] text-muted-foreground"
+                    >
+                      Enable
+                    </Label>
                   </div>
                 </div>
-              )}
+                <div
+                  className={cn(
+                    "transition-opacity",
+                    !state.strokeEnabled && "opacity-50",
+                  )}
+                >
+                  <ColorPicker
+                    value={state.stroke}
+                    onChange={(c) => updateState({ stroke: c })}
+                  />
+                </div>
+              </div>
 
-              {state.fillMode === "multi" && (
-                <div className="bg-muted/30 border rounded-lg p-2 overflow-x-auto">
-                  <div className="flex gap-2 min-w-max pb-1">
-                    {state.text.split("").map((char, idx) => (
-                      <div
-                        key={idx}
-                        className="flex flex-col items-center min-w-6 gap-1"
+              {/* Fill */}
+              <div className="pt-3 border-t space-y-3">
+                <Label className="text-xs font-medium text-muted-foreground">
+                  Fill Mode
+                </Label>
+                <div className="flex bg-muted p-1 rounded-lg">
+                  {(["single", "gradient", "multi"] as const).map(
+                    (mode) => (
+                      <button
+                        key={mode}
+                        onClick={() => updateState({ fillMode: mode })}
+                        className={cn(
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition-all capitalize",
+                          state.fillMode === mode
+                            ? "bg-background shadow-sm text-foreground"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
                       >
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          {char}
-                        </span>
-                        <input
-                          type="color"
-                          value={state.charColors[idx] || state.fill1}
-                          onChange={(e) => updateCharColor(idx, e.target.value)}
-                          className="w-6 h-6 rounded cursor-pointer border-0 p-0"
-                        />
-                      </div>
-                    ))}
-                  </div>
+                        {mode}
+                      </button>
+                    ),
+                  )}
                 </div>
-              )}
+
+                {state.fillMode === "single" && (
+                  <ColorPicker
+                    value={state.fill1}
+                    onChange={(c) => updateState({ fill1: c })}
+                  />
+                )}
+
+                {state.fillMode === "gradient" && (
+                  <div className="flex gap-2 items-center">
+                    <div className="flex-1">
+                      <ColorPicker
+                        value={state.fill1}
+                        onChange={(c) => updateState({ fill1: c })}
+                      />
+                    </div>
+                    <span className="text-muted-foreground">→</span>
+                    <div className="flex-1">
+                      <ColorPicker
+                        value={state.fill2}
+                        onChange={(c) => updateState({ fill2: c })}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {state.fillMode === "multi" && (
+                  <div className="bg-muted/30 border rounded-lg p-2 overflow-x-auto">
+                    <div className="flex gap-2 min-w-max pb-1">
+                      {state.text.split("").map((char, idx) => (
+                        <div
+                          key={idx}
+                          className="flex flex-col items-center min-w-6 gap-1"
+                        >
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            {char}
+                          </span>
+                          <input
+                            type="color"
+                            value={state.charColors[idx] || state.fill1}
+                            onChange={(e) =>
+                              updateCharColor(idx, e.target.value)}
+                            className="w-6 h-6 rounded cursor-pointer border-0 p-0"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Effects */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-3">
               <div
                 className={cn(
                   "cursor-pointer border p-3 rounded-xl transition hover:border-indigo-300 hover:shadow-sm",
@@ -536,7 +542,17 @@ export function Sidebar({ state, updateState, onFontUpload }: SidebarProps) {
                   theme.bg === "#f40009";
 
                 let cardBackground: string | undefined = theme.bg;
-                if (theme.bgMode === "gradient" && theme.bg && theme.bg2) {
+                if (theme.isRainbow) {
+                  const stops = DEFAULT_CHAR_COLORS.map((c, i) => {
+                    const pct =
+                      (i / Math.max(DEFAULT_CHAR_COLORS.length - 1, 1)) *
+                      100;
+                    return `${c} ${pct}%`;
+                  }).join(", ");
+                  cardBackground = `linear-gradient(90deg, ${stops})`;
+                } else if (
+                  theme.bgMode === "gradient" && theme.bg && theme.bg2
+                ) {
                   // Prefer background gradient when configured
                   cardBackground =
                     `linear-gradient(135deg, ${theme.bg} 0%, ${theme.bg2} 100%)`;
@@ -638,8 +654,8 @@ export function Sidebar({ state, updateState, onFontUpload }: SidebarProps) {
                   </span>
                 </div>
                 <Slider
-                  min={40}
-                  max={200}
+                  min={8}
+                  max={400}
                   value={[state.fontSize]}
                   onValueChange={([v]) => updateState({ fontSize: v })}
                   className="**:data-[slot=slider-track]:bg-slate-200 **:data-[slot=slider-track]:h-2 **:data-[slot=slider-range]:bg-indigo-500 **:data-[slot=slider-thumb]:bg-white **:data-[slot=slider-thumb]:border-2 **:data-[slot=slider-thumb]:border-indigo-500 **:data-[slot=slider-thumb]:shadow-lg **:data-[slot=slider-thumb]:w-5 **:data-[slot=slider-thumb]:h-5"
@@ -654,7 +670,7 @@ export function Sidebar({ state, updateState, onFontUpload }: SidebarProps) {
                 </div>
                 <Slider
                   min={0.1}
-                  max={1.5}
+                  max={10}
                   step={0.1}
                   value={[state.speed]}
                   onValueChange={([v]) => updateState({ speed: v })}
