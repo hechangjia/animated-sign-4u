@@ -250,7 +250,7 @@ export default function SignatureBuilderPage() {
       <header className="h-14 border-b bg-card backdrop-blur-md flex items-center justify-between px-6 shrink-0 z-20 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-linear-to-br  from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg transform -rotate-3">
-            S
+            4U
           </div>
           <h1 className="text-sm font-bold tracking-tight hidden md:block">
             {t("appTitle")}
@@ -258,71 +258,6 @@ export default function SignatureBuilderPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Locale toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleLocale}
-            className="h-8 text-xs px-2 inline-flex"
-          >
-            {locale === "en" ? "EN" : "中文"}
-          </Button>
-
-          {/* Theme toggle */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={toggleTheme}
-            className="h-8 w-8 text-xs inline-flex"
-          >
-            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          </Button>
-
-          {/* GitHub repo link */}
-          <Button
-            asChild
-            variant="ghost"
-            size="icon-sm"
-            className="h-8 w-8 text-xs inline-flex"
-          >
-            <a
-              href="https://github.com/YuniqueUnic/animated-sign-4u"
-              target="_blank"
-              rel="noreferrer"
-              aria-label={t("githubRepoLabel")}
-            >
-              <Github className="h-4 w-4" />
-            </a>
-          </Button>
-          {/* Desktop Download - hover dropdown with all formats */}
-          <div className="relative group hidden md:block">
-            <Button
-              variant="default"
-              size="sm"
-              className="h-8 text-xs gap-2 bg-gray-900 hover:bg-gray-800 text-white pr-8"
-            >
-              <Download className="w-3.5 h-3.5" />
-              {t("mobileDownloadLabel")}
-              <ChevronDown className="w-3 h-3 ml-auto absolute right-2 opacity-50" />
-            </Button>
-            <div className="absolute right-0 mt-2 w-52 bg-popover rounded-xl shadow-2xl border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
-              <div className="p-1">
-                {downloadOptions.map((opt) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={opt.action}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition text-left"
-                  >
-                    {renderDownloadIcon(opt.key)}
-                    <span>{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* Mobile Code & Download */}
           <div className="flex items-center gap-2 md:hidden">
             <DropdownMenu>
@@ -360,6 +295,72 @@ export default function SignatureBuilderPage() {
               {t("mobileCodeLabel")}
             </Button>
           </div>
+
+          {/* Desktop Download - hover dropdown with all formats */}
+          <div className="relative group hidden md:block">
+            <Button
+              variant="default"
+              size="sm"
+              className="h-8 text-xs gap-2 bg-gray-900 hover:bg-gray-800 text-white pr-8"
+            >
+              <Download className="w-3.5 h-3.5" />
+              {t("mobileDownloadLabel")}
+              <ChevronDown className="w-3 h-3 ml-auto absolute right-2 opacity-50" />
+            </Button>
+            <div className="absolute right-0 mt-2 w-52 bg-popover rounded-xl shadow-2xl border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <div className="p-1">
+                {downloadOptions.map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={opt.action}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition text-left"
+                  >
+                    {renderDownloadIcon(opt.key)}
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Locale toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleLocale}
+            className="h-8 text-xs px-2 inline-flex"
+          >
+            {locale === "en" ? "EN" : "中文"}
+          </Button>
+
+          {/* Theme toggle */}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={toggleTheme}
+            className="h-8 w-8 text-xs inline-flex"
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+
+          {/* GitHub repo link */}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon-sm"
+            className="h-8 w-8 text-xs inline-flex"
+          >
+            <a
+              href="https://github.com/YuniqueUnic/animated-sign-4u"
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t("githubRepoLabel")}
+            >
+              <Github className="h-4 w-4" />
+            </a>
+          </Button>
         </div>
       </header>
 

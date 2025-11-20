@@ -290,7 +290,7 @@ export function PreviewArea(
           className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(45deg, #888 25%, transparent 25%), linear-gradient(-45deg, #888 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #888 75%), linear-gradient(-45deg, transparent 75%, #888 75%)",
+              "linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%)",
             backgroundSize: "30px 30px",
             backgroundPosition: "0 0, 0 15px, 15px -15px, -15px 0px",
           }}
@@ -342,25 +342,25 @@ export function PreviewArea(
           <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-background/90 backdrop-blur px-2 py-1 rounded-full shadow-sm border pointer-events-auto">
             <button
               type="button"
-              className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+              className="w-6 h-6 text-xl flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 setZoom((z) =>
-                  Math.max(0.5, Math.round((z - 0.25) * 100) / 100)
+                  Math.max(0.1, Math.round((z - 0.25) * 100) / 100)
                 );
               }}
             >
               -
             </button>
-            <span className="tabular-nums w-10 text-center">
+            <span className="tabular-nums w-10 text-sm text-center">
               {Math.round(zoom * 100)}%
             </span>
             <button
               type="button"
-              className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+              className="w-6 h-6 text-xl flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
-                setZoom((z) => Math.min(2, Math.round((z + 0.25) * 100) / 100));
+                setZoom((z) => Math.min(4, Math.round((z + 0.25) * 100) / 100));
               }}
             >
               +
