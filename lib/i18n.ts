@@ -169,7 +169,7 @@ export const messages = {
         themeNameSchool: "校园",
         themeNameBlueprint: "蓝图",
         themeNameChinese: "中国红",
-        themeNameCyber: "赛博",
+        themeNameCyber: "赛博朋克",
         themeNamePepsi: "百事",
         themeNameCoke: "可口可乐",
         themeNameSprite: "雪碧",
