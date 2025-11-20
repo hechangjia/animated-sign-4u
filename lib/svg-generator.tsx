@@ -100,26 +100,52 @@ export function generateSVG(
   const staticRender = options?.staticRender ?? false;
   const idPrefix = options?.idPrefix ?? "";
 
-  // Decouple text and background layers:
-  // - Text layer: always uses the original viewBox (text bounding box)
-  // - Background card can be smaller/larger and is centered inside this
-  //   canvas so that text is never clipped and can overflow the card edges.
-  let canvasWidth = viewBox.w;
-  let canvasHeight = viewBox.h;
+  // Separate text bounds from background card and overall canvas:
+  // - textWidth/textHeight come from the incoming viewBox (glyph bounds)
+  // - cardWidth/cardHeight are derived from bgSizeMode/bgWidth/bgHeight
+  // - canvasWidth/canvasHeight are the final SVG logical dimensions
+  const textWidth = viewBox.w;
+  const textHeight = viewBox.h;
+
+  let canvasWidth = textWidth;
+  let canvasHeight = textHeight;
+  let cardWidth = textWidth;
+  let cardHeight = textHeight;
+
+  if (state.bgSizeMode === "custom") {
+    cardWidth = state.bgWidth || textWidth;
+    cardHeight = state.bgHeight || textHeight;
+  }
+
+  // If we actually draw a background card, ensure the canvas is at least as
+  // large as the card so the card is never clipped. When the card is
+  // smaller than the text bounds, the canvas stays based on the text.
+  if (!state.bgTransparent) {
+    canvasWidth = Math.max(canvasWidth, cardWidth);
+    canvasHeight = Math.max(canvasHeight, cardHeight);
+  }
+
   let textOffsetX = 0;
   let textOffsetY = 0;
 
   const hasHanzi = paths.some((p) => p.isHanzi);
   if (hasHanzi) {
-    const adjustY = canvasHeight * 0.04;
+    const adjustY = textHeight * 0.04;
     textOffsetY -= adjustY;
+  }
+
+  // If the canvas expanded beyond the text bounds because of a larger
+  // background card, center the text within the canvas.
+  if (canvasWidth > textWidth) {
+    textOffsetX += (canvasWidth - textWidth) / 2;
+  }
+  if (canvasHeight > textHeight) {
+    textOffsetY += (canvasHeight - textHeight) / 2;
   }
 
   const offsetX = textOffsetX;
   const offsetY = textOffsetY;
 
-  // SVG viewBox always matches the text bounding box so that glyphs are
-  // never clipped by a smaller custom background card.
   const svgOriginX = viewBox.x;
   const svgOriginY = viewBox.y;
 
@@ -335,8 +361,8 @@ export function generateSVG(
   });
 
   // Background rect (solid or gradient)
-  // Background is independent from text bounds and can be smaller than
-  // the canvas. It is centered so that text can overflow around it.
+  // Background is independent from text bounds and can be smaller or
+  // larger than the text. It is centered within the final canvas.
   let backgroundRect = "";
   let cardRect: { x: number; y: number; w: number; h: number } | null = null;
   if (!state.bgTransparent) {
@@ -344,16 +370,12 @@ export function generateSVG(
       ? `url(#${idPrefix}bg-grad)`
       : state.bg;
 
-    let rectW = canvasWidth;
-    let rectH = canvasHeight;
-
-    if (state.bgSizeMode === "custom") {
-      rectW = state.bgWidth || canvasWidth;
-      rectH = state.bgHeight || canvasHeight;
-    }
+    const rectW = cardWidth;
+    const rectH = cardHeight;
 
     // Center the background card within the overall canvas so that
-    // text can extend beyond the card without being clipped.
+    // text can extend beyond a smaller card, and a larger card remains
+    // fully visible.
     const rectX = viewBox.x + (canvasWidth - rectW) / 2;
     const rectY = viewBox.y + (canvasHeight - rectH) / 2;
 

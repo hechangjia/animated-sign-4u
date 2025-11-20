@@ -1,5 +1,17 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
+// Mock Hanzi data utilities so /api/sign can be tested without network.
+vi.mock("@/lib/hanzi-data", () => {
+    return {
+        fetchHanziData: vi.fn(async () => ({
+            // Minimal stroke list; actual geometry is not important here.
+            strokes: ["M0 0 L10 0", "M0 0 L0 10"],
+        })),
+        isChinese: (ch: string) => /[\u4e00-\u9fff]/u.test(ch),
+        mergeHanziStrokes: (strokes: string[]) => strokes.join(" "),
+    };
+});
+
 // Simple fake font implementation reused across tests
 const fakeFont = {
     unitsPerEm: 1000,
@@ -153,6 +165,39 @@ describe("GET /api/sign", () => {
             expect(json.paths.length).toBeGreaterThan(0);
             expect(json.viewBox).toBeDefined();
         }
+    });
+
+    it("uses Hanzi stroke data when useHanziData=1 and text is Chinese", async () => {
+        const { GET } = await import("@/app/api/sign/route");
+
+        const req = new Request(
+            "http://localhost/api/sign?text=汉&useHanziData=1&format=json",
+        );
+        const res = await GET(req as any);
+        const json = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(Array.isArray(json.paths)).toBe(true);
+        // Each Hanzi stroke becomes its own path with isHanzi flag
+        expect(json.paths.length).toBeGreaterThan(1);
+        expect(json.paths.every((p: any) => p.isHanzi === true)).toBe(true);
+        expect(json.viewBox).toBeDefined();
+    });
+
+    it("respects bg=transparent and omits background rect in SVG", async () => {
+        const { GET } = await import("@/app/api/sign/route");
+
+        const req = new Request(
+            "http://localhost/api/sign?text=NoBg&bg=transparent",
+        );
+        const res = await GET(req as any);
+        const body = await res.text();
+
+        expect(res.status).toBe(200);
+        expect(res.headers.get("Content-Type")).toContain("image/svg+xml");
+        expect(body).toContain("<svg");
+        // No background <rect> is rendered when bgTransparent is true
+        expect(body).not.toContain("<rect");
     });
 
     it("initializes pepsi theme as multi fill and stroke with black/white pattern", async () => {

@@ -130,4 +130,65 @@ describe("buildStateFromQuery", () => {
         expect(state.useGlow).toBe(true);
         expect(state.useShadow).toBe(false);
     });
+
+    it("parses boolean flags for linkFillStroke and useHanziData", () => {
+        const params = new URLSearchParams({
+            linkFillStroke: "1",
+            useHanziData: "true",
+            useGlow: "0",
+            useShadow: "true",
+        });
+
+        const state = buildStateFromQuery(params);
+
+        expect(state.linkFillStroke).toBe(true);
+        expect(state.useHanziData).toBe(true);
+        // Mixed boolean encodings should still be respected
+        expect(state.useGlow).toBe(false);
+        expect(state.useShadow).toBe(true);
+    });
+
+    it("treats bg=transparent as transparent background while still parsing bgMode/bg2", () => {
+        const params = new URLSearchParams({
+            bg: "transparent",
+            bgMode: "gradient",
+            bg2: "112233",
+        });
+
+        const state = buildStateFromQuery(params);
+
+        expect(state.bgTransparent).toBe(true);
+        // bg color itself is not important when transparent, but mode/secondary
+        // should still be parsed for consistency when toggling transparency.
+        expect(state.bgMode).toBe("gradient");
+        expect(state.bg2).toBe("#112233");
+    });
+
+    it("ignores invalid numeric values and keeps INITIAL_STATE defaults", () => {
+        const params = new URLSearchParams({
+            fontSize: "-10",
+            speed: "0",
+            charSpacing: "NaN",
+            borderRadius: "-4",
+            cardPadding: "-1",
+            bgWidth: "-100",
+            bgHeight: "0",
+            texSize: "0",
+            texThickness: "-2",
+            texOpacity: "2",
+        });
+
+        const state = buildStateFromQuery(params);
+
+        expect(state.fontSize).toBe(INITIAL_STATE.fontSize);
+        expect(state.speed).toBe(INITIAL_STATE.speed);
+        expect(state.charSpacing).toBe(INITIAL_STATE.charSpacing);
+        expect(state.borderRadius).toBe(INITIAL_STATE.borderRadius);
+        expect(state.cardPadding).toBe(INITIAL_STATE.cardPadding);
+        expect(state.bgWidth).toBe(INITIAL_STATE.bgWidth);
+        expect(state.bgHeight).toBe(INITIAL_STATE.bgHeight);
+        expect(state.texSize).toBe(INITIAL_STATE.texSize);
+        expect(state.texThickness).toBe(INITIAL_STATE.texThickness);
+        expect(state.texOpacity).toBe(INITIAL_STATE.texOpacity);
+    });
 });
