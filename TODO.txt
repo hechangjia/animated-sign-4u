@@ -300,3 +300,8 @@ previwerArea 的这个自适应阴影强度变化,,, 没必要,, 我只是想要
               return `0 ${shadowY}px ${shadowBlur}px ${shadowSpread}px rgba(0, 0, 0, 0.12)`;
             })(),
           }}
+
+/Users/unic/dev/projs/ts/animated-sign/components/signature-builder/preview-area.tsx
+  const [zoom, setZoom] = useState(1);
+在 previewArea 中已经添加 zoom 功能了, 但是我们刚刚调整的shadow
+却没有跟着同步更新缩放, 导致缩放后阴影的尺寸仍然不变, 而实际的背景尺寸却是变化了.. 需要保持同步一下

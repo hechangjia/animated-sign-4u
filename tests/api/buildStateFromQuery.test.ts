@@ -71,4 +71,63 @@ describe("buildStateFromQuery", () => {
         expect(state.bgWidth).toBe(800);
         expect(state.bgHeight).toBe(400);
     });
+
+    it("parses core style and color parameters", () => {
+        const params = new URLSearchParams({
+            text: "Signature",
+            font: "sacramento",
+            fontSize: "39",
+            speed: "1.25",
+            charSpacing: "10",
+            borderRadius: "32",
+            cardPadding: "16",
+            fill1: "ff0000",
+            fill2: "00ff00",
+            stroke: "0000ff",
+            stroke2: "333333",
+            strokeMode: "gradient",
+            strokeEnabled: "1",
+            bg: "1e3a8a",
+            bgMode: "gradient",
+            bg2: "0f172a",
+            texture: "grid",
+            texColor: "ffffff",
+            texSize: "42",
+            texThickness: "2",
+            texOpacity: "0.7",
+            useGlow: "1",
+            useShadow: "0",
+        });
+
+        const state = buildStateFromQuery(params);
+
+        expect(state.text).toBe("Signature");
+        expect(state.font).toBe("sacramento");
+        expect(state.fontSize).toBe(39);
+        expect(state.speed).toBe(1.25);
+        expect(state.charSpacing).toBe(10);
+        expect(state.borderRadius).toBe(32);
+        expect(state.cardPadding).toBe(16);
+
+        expect(state.fill1).toBe("#ff0000");
+        expect(state.fill2).toBe("#00ff00");
+        expect(state.stroke).toBe("#0000ff");
+        expect(state.stroke2).toBe("#333333");
+        expect(state.strokeMode).toBe("gradient");
+        expect(state.strokeEnabled).toBe(true);
+
+        expect(state.bgTransparent).toBe(false);
+        expect(state.bg).toBe("#1e3a8a");
+        expect(state.bgMode).toBe("gradient");
+        expect(state.bg2).toBe("#0f172a");
+
+        expect(state.texture).toBe("grid");
+        expect(state.texColor).toBe("#ffffff");
+        expect(state.texSize).toBe(42);
+        expect(state.texThickness).toBe(2);
+        expect(state.texOpacity).toBe(0.7);
+
+        expect(state.useGlow).toBe(true);
+        expect(state.useShadow).toBe(false);
+    });
 });

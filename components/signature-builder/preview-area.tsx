@@ -299,18 +299,18 @@ export function PreviewArea(
         <div
           ref={containerRef}
           className={cn(
-            "relative transition-all duration-300 group cursor-pointer select-none flex items-center justify-center min-w-[200px] min-h-[100px]",
-            state.bgTransparent ? "hover:shadow-xl" : "hover:scale-[1.02]",
+            "relative transition-all duration-300 group cursor-pointer select-none flex items-center justify-center min-w-[200px] min-h-[100px] hover:shadow-xl",
           )}
           onClick={replay}
           style={{
             borderRadius: state.borderRadius,
-            boxShadow: state.bgTransparent ? undefined : (() => {
-              // 自适应阴影大小
-              // 在 custom 模式下优先使用背景尺寸，如果未设置则回退到容器尺寸
-              // 固定阴影强度与模糊尺寸，避免随容器大小变化而改变观感
-              return "0 20px 40px -16px rgba(0, 0, 0, 0.12)";
-            })(),
+            boxShadow: state.bgTransparent
+              ? undefined
+              : "0 10px 20px -16px rgba(0, 0, 0, 0.16)",
+            // Scale the entire card (background + shadow) with zoom so the
+            // shadow container size matches the visual background size.
+            transform: `scale(${zoom})`,
+            transformOrigin: "center center",
           }}
         >
           {loading
@@ -324,10 +324,6 @@ export function PreviewArea(
               <div
                 dangerouslySetInnerHTML={{ __html: svgContent }}
                 className="transition-transform duration-300"
-                style={{
-                  transform: `scale(${zoom})`,
-                  transformOrigin: "center center",
-                }}
               />
             )}
 
