@@ -7,7 +7,17 @@ import { CodePanel } from "@/components/signature-builder/code-panel";
 import { MobileDrawerSidebar } from "@/components/signature-builder/mobile-drawer-sidebar";
 import { INITIAL_STATE, THEMES } from "@/lib/constants";
 import { FillMode, SignatureState, TextureType } from "@/lib/types";
-import { ChevronDown, Download, Moon, Sun } from "lucide-react";
+import {
+  ChevronDown,
+  Code2,
+  Download,
+  FileCode2,
+  FileImage,
+  Film,
+  Moon,
+  Sun,
+  Triangle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
@@ -97,6 +107,25 @@ export default function SignatureBuilderPage() {
 
   const updateState = (updates: Partial<SignatureState>) => {
     setState((prev) => ({ ...prev, ...updates }));
+  };
+
+  const renderDownloadIcon = (key: string) => {
+    switch (key) {
+      case "react":
+        return <Code2 className="w-3.5 h-3.5" />;
+      case "vue":
+        return <Triangle className="w-3.5 h-3.5 rotate-180" />;
+      case "js":
+        return <FileCode2 className="w-3.5 h-3.5" />;
+      case "svg":
+        return <FileCode2 className="w-3.5 h-3.5" />;
+      case "png":
+        return <FileImage className="w-3.5 h-3.5" />;
+      case "gif":
+        return <Film className="w-3.5 h-3.5" />;
+      default:
+        return null;
+    }
   };
 
   const toggleTheme = () => {
@@ -258,9 +287,10 @@ export default function SignatureBuilderPage() {
                     key={opt.key}
                     type="button"
                     onClick={opt.action}
-                    className="w-full text-left px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition text-left"
                   >
-                    {opt.label}
+                    {renderDownloadIcon(opt.key)}
+                    <span>{opt.label}</span>
                   </button>
                 ))}
               </div>
@@ -287,9 +317,10 @@ export default function SignatureBuilderPage() {
                   <DropdownMenuItem
                     key={opt.key}
                     onClick={opt.action}
-                    className="text-xs"
+                    className="text-xs flex items-center gap-2"
                   >
-                    {opt.label}
+                    {renderDownloadIcon(opt.key)}
+                    <span>{opt.label}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -377,24 +408,6 @@ export default function SignatureBuilderPage() {
                 state={state}
                 updateState={updateState}
                 onFontUpload={handleFontUpload}
-                onToggleOpen={(open) => {
-                  const panel = mobileBottomPanelRef.current;
-                  if (!panel) return;
-                  if (open) {
-                    // Expand to a reasonable default when opening.
-                    try {
-                      panel.expand?.();
-                    } catch {
-                      // no-op
-                    }
-                  } else {
-                    try {
-                      panel.collapse?.();
-                    } catch {
-                      // no-op
-                    }
-                  }
-                }}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

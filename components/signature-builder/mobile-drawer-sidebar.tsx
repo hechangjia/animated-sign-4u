@@ -97,24 +97,28 @@ export function MobileDrawerSidebar(
                 "h-full",
             )}
         >
-            <button
-                type="button"
-                className="h-10 flex items-center justify-between px-4 text-xs font-medium text-muted-foreground"
-                onClick={toggleOpen}
-            >
-                <span className="truncate">{t(activeTitleKey)}</span>
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wide">
-                        {open ? t("drawerCollapseLabel") : t("drawerOpenLabel")}
-                    </span>
-                    <ChevronDown
-                        className={cn(
-                            "w-3 h-3 transition-transform",
-                            open && "rotate-180",
-                        )}
-                    />
-                </div>
-            </button>
+            <div className={cn(!open && "mt-auto")}>
+                <button
+                    type="button"
+                    className="h-10 flex items-center justify-between px-4 text-xs font-medium text-muted-foreground w-full"
+                    onClick={toggleOpen}
+                >
+                    <span className="truncate">{t(activeTitleKey)}</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-wide">
+                            {open
+                                ? t("drawerCollapseLabel")
+                                : t("drawerOpenLabel")}
+                        </span>
+                        <ChevronDown
+                            className={cn(
+                                "w-3 h-3 transition-transform",
+                                open && "rotate-180",
+                            )}
+                        />
+                    </div>
+                </button>
+            </div>
 
             {open && (
                 <div className="flex-1 min-h-0 flex flex-col">

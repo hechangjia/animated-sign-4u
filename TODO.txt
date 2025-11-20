@@ -95,6 +95,7 @@ colors: fn()  一个函数, 这样的话, 就可以实现多色填充逻辑以�
 7. quick theme 中的各个主题名字也应该支持 i18n
 8. style & color 中的每个控件也应该支持 i18n
 9. preview 区域的背景目前确实不会影响 font size 了, 但是bg 无法超出 当前 fontsize 自动算出来的背景size.. 需要修复, 使得 fontsize 和 背景完全独立, font 超出编辑就超出了吧. 也就是 font 和 bg 应该是 z 轴上的关系, font 正好是在 bg 的中间的上面而已.
+10. Download button 的每个 items 都需要对应的 icon
 
 1. 仔细阅读这个计划/重构/实现文档. 理清楚逻辑, 了解清楚需求, 仔细认真的对比代码. 理解当前的进度.
 2. 然后按照其描述完成任务接下来就请继续进行实现/迁移/重构, 大改也可以的.可以接受大范围的重构。
@@ -104,3 +105,75 @@ colors: fn()  一个函数, 这样的话, 就可以实现多色填充逻辑以�
 6. 保持 KISS, LISP, DRY, SOLID 等规则, 保持代码函数化, 模块化, 组件化, 保持可组合性, 保持简单. 禁止过于冗余, 并且没有用的代码请你直接删除. 避免导致代码的无效冗余.
 7. 遇到问题，请你上网查询解决办法积极使用各种 MCP 工具来辅助你完成相关任务
 8. 使用 `cargo check`/`pnpm build`/`tsc xxx`/`vite xxx`等等代码检查工具, 以及代码质量分析工具来确保项目的正确性, 可编译性. 如果出现问题, 请积极修复.
+
+====
+
+请你自行启动 pnpm dev(记得先把之前的程序或者占用3000端口的程序kill掉再然启动), 然后使用 @chrome-devtools 进行 UI 点击,导航, dom查询测试,然后找到问题所在, 并且修复
+
+2. drawer 贴底问题通过 h-full 填满 ResizablePanel 解决。并没有解决(你可以使用 @chrome-devtools 来辅助你找到问题并且解决)
+3. 在mobile模式下, Pepsi,sprite 等主题配色加载不出来, 而切换为normal 模式就行了,,,,,
+我个人觉得可能的原因有:
+1. mobile width 比较小, 导致背景颜色上的渲染有问题. 
+2. mobile 上的布局导致了渲染有问题
+3. custom bg size 逻辑带来的问题
+
+10. Download button 的每个 items 都需要对应的 icon
+
+3. 积极使用 @chrome-devtools 等 mcps 工具来辅助你完成任务
+4. !!!!这里没有时间限制， 也没有其他限制, 需要你遵守的只有下面的内容：     
+5. 需要不断继续的完成任务, 一般方向的重构/实现/调整等等不需要征求我的意见
+6. 保持 KISS, LISP, DRY, SOLID 等规则, 保持代码函数化, 模块化, 组件化, 保持可组合性, 保持简单. 禁止过于冗余, 并且没有用的代码请你直接删除. 避免导致代码的无效冗余.
+7. 遇到问题，请你上网查询解决办法积极使用各种 MCP 工具来辅助你完成相关任务
+8. 使用 cargo check/pnpm build/tsc xxx/vite xxx等等代码检查工具, 以及代码质量分析工具来确保项目的正确性, 可编译性. 如果出现问题, 请积极修复.
+
+---
+
+所有问题都可以复现, 你使用 @chrome-devtools 自己手动操作一遍就知道了!!, click, take snapshot, click , take snapshot, 不断循环, 就能操作 web 界面了.,
+
+现在问题还是存在. 请你继续利用工具检查和处理
+
+请你自行启动 pnpm dev(记得先把之前的程序或者占用3000端口的程序kill掉再然启动), 然后使用 @chrome-devtools 进行 UI 点击,导航, dom查询测试,然后找到问题所在, 并且修复
+
+2. drawer 贴底问题通过 h-full 填满 ResizablePanel 解决。并没有解决(你可以使用 @chrome-devtools 来辅助你找到问题并且解决)
+3. 在mobile模式下, Pepsi,sprite 等主题配色加载不出来, 而切换为normal 模式就行了,,,,,
+我个人觉得可能的原因有:
+1. mobile width 比较小, 导致背景颜色上的渲染有问题. 
+2. mobile 上的布局导致了渲染有问题
+3. custom bg size 逻辑带来的问题
+
+10. Download button 的每个 items 都需要对应的 icon
+
+3. 积极使用 @chrome-devtools 等 mcps 工具来辅助你完成任务
+4. !!!!这里没有时间限制， 也没有其他限制, 需要你遵守的只有下面的内容：     
+5. 需要不断继续的完成任务, 一般方向的重构/实现/调整等等不需要征求我的意见
+6. 保持 KISS, LISP, DRY, SOLID 等规则, 保持代码函数化, 模块化, 组件化, 保持可组合性, 保持简单. 禁止过于冗余, 并且没有用的代码请你直接删除. 避免导致代码的无效冗余.
+7. 遇到问题，请你上网查询解决办法积极使用各种 MCP 工具来辅助你完成相关任务
+8. 使用 cargo check/pnpm build/tsc xxx/vite xxx等等代码检查工具, 以及代码质量分析工具来确保项目的正确性, 可编译性. 如果出现问题, 请积极修复.
+
+
+---
+
+
+1. pnpm dev 启动服务 localhost:3000
+2. 访问 http://localhost:3000/
+3. 自动到主页面
+4. 这时候的底部 drawer 是 open 的, 并且默认的 preview 是正确渲染的
+5. 我拖动 drawer 和 preview 之间的 splitter, 能够正确的改变 preview 和 drawer 的高度, 自适应的改变.
+6. 我将 drawer 抬高了, 然后点击 drawer header 上的 collapse 按钮, 抽屉收起
+    - 抽屉收起后, preview 的高度应该增加, 但是实际没变
+    - 没变的原因是: 底部的 drawer 的 header 吸附到了底部, 但是 drawer 整体占用的空间依旧没变
+    - drawer 吸附到底部之后, 原本的 drawer 空间就只剩下白色的背景了..
+7. 我再 open drawer, drawer 展开. 控件也正常渲染
+8. 点击右划按钮, 直到切换到 Qucik Theme, 然后我点击theme button, 改变主题
+    - blueprint theme, preview 区域正确渲染了字体和背景, 但是 texture 并没有渲染出来.
+    - Chinese theme, preview 区域正确渲染了字体和背景, 但是 texture 并没有渲染出来.
+    - Cyber theme, preview 区域正确渲染了字体的 stroke, 但是字体的fill, 背景和 texture 都没有渲染出来
+    - Pepsi theme, preview 区域正确渲染了字体(fill+stroke), 但是背景和 texture 都没有渲染出来
+    - Coke theme, 一切渲染正确, 但是就是宽度太宽了, 背景宽度已经死死的贴住了两边.
+        - 如果能够自动缩放就好了, 希望能够支持 preview 区域的放大缩小, 但是不影响用户实际想要导出的尺寸
+    - sprite theme, 所有都没有渲染出来..
+    - jade theme: 没有背景, 没有 texture.
+    - laser theme, 只有 stroke 渲染出来了...
+    - rainbow theme, 渲染正确, 但是就是宽度太宽了, 背景宽度已经死死的贴住了两边.
+
+同时我还希望底部的 drawer 能够支持滑动切换的操作. 而不是只能靠点击向左/右切换按钮才能切换/.

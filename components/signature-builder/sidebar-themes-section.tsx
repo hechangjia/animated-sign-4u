@@ -37,6 +37,10 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
             charColors: [],
             strokeCharColors: [],
             strokeMode: theme.strokeMode ?? "single",
+            // reset background sizing so themes always start from auto card size
+            bgSizeMode: "auto",
+            bgWidth: null,
+            bgHeight: null,
         };
 
         // Use theme-level generators for multi modes when provided.
