@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { ColorPicker } from "./controls/color-picker";
 import { ChevronDown, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface StyleColorSectionProps {
     state: SignatureState;
@@ -22,6 +23,7 @@ interface StyleColorSectionProps {
 export function StyleColorSection(
     { state, updateState }: StyleColorSectionProps,
 ) {
+    const { t } = useI18n();
     const updateCharColor = (index: number, color: string) => {
         const newColors = [...state.charColors];
         newColors[index] = color;
@@ -41,7 +43,7 @@ export function StyleColorSection(
                     <span className="w-6 h-6 rounded bg-pink-100 text-pink-600 flex items-center justify-center">
                         <Palette className="w-3 h-3" />
                     </span>
-                    <span>Style & Color</span>
+                    <span>{t("styleColorSectionTitle")}</span>
                     <ChevronDown className="ml-auto w-3 h-3 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
                 </summary>
 
@@ -49,7 +51,7 @@ export function StyleColorSection(
                 <div className="mt-2 p-3 bg-card border rounded-xl shadow-sm space-y-3">
                     <div className="flex justify-between items-center">
                         <Label className="text-xs font-semibold">
-                            Card Background
+                            {t("cardBackgroundLabel")}
                         </Label>
                         <div className="flex items-center gap-2">
                             <Switch
@@ -62,7 +64,7 @@ export function StyleColorSection(
                                 htmlFor="bg-transparent"
                                 className="text-xs text-muted-foreground"
                             >
-                                Transparent
+                                {t("transparentLabel")}
                             </Label>
                         </div>
                     </div>
@@ -76,7 +78,7 @@ export function StyleColorSection(
                     >
                         <div className="flex items-center justify-between">
                             <Label className="text-xs text-muted-foreground">
-                                Background Mode
+                                {t("backgroundModeLabel")}
                             </Label>
                             <div className="flex bg-muted p-0.5 rounded-lg text-[11px]">
                                 {(["solid", "gradient"] as const).map((
@@ -128,7 +130,7 @@ export function StyleColorSection(
 
                     <div className="pt-3 border-t">
                         <Label className="text-xs text-muted-foreground mb-2 block">
-                            Texture
+                            {t("textureLabel")}
                         </Label>
                         <Select
                             value={state.texture}
@@ -176,7 +178,7 @@ export function StyleColorSection(
                             <div className="mt-3 space-y-3 pl-1 animate-in slide-in-from-top-2 fade-in duration-200">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] text-muted-foreground">
-                                        Color
+                                        {t("textureColorLabel")}
                                     </span>
                                     <input
                                         type="color"
@@ -190,7 +192,7 @@ export function StyleColorSection(
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-[10px] text-muted-foreground">
-                                        <span>Size</span>
+                                        <span>{t("textureSizeLabel")}</span>
                                         <span>{state.texSize}</span>
                                     </div>
                                     <Slider
@@ -204,7 +206,9 @@ export function StyleColorSection(
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-[10px] text-muted-foreground">
-                                        <span>Thickness</span>
+                                        <span>
+                                            {t("textureThicknessLabel")}
+                                        </span>
                                         <span>{state.texThickness}</span>
                                     </div>
                                     <Slider
@@ -219,7 +223,7 @@ export function StyleColorSection(
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between text-[10px] text-muted-foreground">
-                                        <span>Opacity</span>
+                                        <span>{t("textureOpacityLabel")}</span>
                                         <span>{state.texOpacity}</span>
                                     </div>
                                     <Slider
@@ -239,7 +243,7 @@ export function StyleColorSection(
                     <div className="pt-3 border-t space-y-2">
                         <div className="flex justify-between text-xs">
                             <span className="text-muted-foreground">
-                                Corner Radius
+                                {t("cornerRadiusLabel")}
                             </span>
                             <span className="font-mono text-indigo-600">
                                 {state.borderRadius}px
@@ -259,7 +263,7 @@ export function StyleColorSection(
                     <div className="pt-3 border-t mt-2 space-y-2">
                         <div className="flex items-center justify-between">
                             <Label className="text-xs text-muted-foreground">
-                                Background Size
+                                {t("backgroundSizeLabel")}
                             </Label>
                             <div className="flex bg-muted p-0.5 rounded-lg text-[11px]">
                                 {(["auto", "custom"] as const).map((mode) => (

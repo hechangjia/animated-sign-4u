@@ -3,6 +3,7 @@ import { SignatureState } from "@/lib/types";
 import { DEFAULT_CHAR_COLORS, THEMES } from "@/lib/constants";
 import { ChevronDown, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ThemesSectionProps {
     state: SignatureState;
@@ -10,6 +11,7 @@ interface ThemesSectionProps {
 }
 
 export function ThemesSection({ state, updateState }: ThemesSectionProps) {
+    const { t } = useI18n();
     const applyTheme = (themeName: string) => {
         const theme = THEMES[themeName];
         if (!theme) return;
@@ -40,7 +42,7 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
                     <span className="w-6 h-6 rounded bg-amber-100 text-amber-600 flex items-center justify-center">
                         <Wand2 className="w-3 h-3" />
                     </span>
-                    <span>Quick Themes</span>
+                    <span>{t("quickThemesSectionTitle")}</span>
                     <ChevronDown className="ml-auto w-3 h-3 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
                 </summary>
                 <div className="mt-2 grid grid-cols-4 gap-1.5">

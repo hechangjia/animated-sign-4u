@@ -178,7 +178,7 @@ export default function SignatureBuilderPage() {
             variant="ghost"
             size="sm"
             onClick={toggleLocale}
-            className="h-8 text-xs px-2 hidden sm:inline-flex"
+            className="h-8 text-xs px-2 inline-flex"
           >
             {locale === "en" ? "EN" : "中文"}
           </Button>
@@ -188,7 +188,7 @@ export default function SignatureBuilderPage() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="h-8 w-8 text-xs hidden sm:inline-flex"
+            className="h-8 w-8 text-xs inline-flex"
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -285,7 +285,7 @@ export default function SignatureBuilderPage() {
             className="h-8 text-xs gap-2 hidden md:inline-flex"
           >
             <Download className="w-3.5 h-3.5" />
-            SVG
+            {t("svgButton")}
           </Button>
 
           {/* Mobile Code & Download */}
@@ -297,6 +297,9 @@ export default function SignatureBuilderPage() {
               className="h-8 text-xs px-3"
             >
               <Download className="w-3.5 h-3.5" />
+              <span className="ml-1 text-[11px]">
+                {t("mobileDownloadLabel")}
+              </span>
             </Button>
             <Button
               variant="ghost"
@@ -304,7 +307,7 @@ export default function SignatureBuilderPage() {
               onClick={() => setIsCodeOverlayOpen(true)}
               className="h-8 text-xs px-3"
             >
-              Code
+              {t("mobileCodeLabel")}
             </Button>
           </div>
         </div>
@@ -386,7 +389,7 @@ export default function SignatureBuilderPage() {
         <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col md:hidden">
           <div className="flex items-center justify-between px-4 py-2 bg-[#161b22] border-b border-[#30363d]">
             <span className="text-xs font-semibold text-[#c9d1d9]">
-              API & Code
+              {t("apiAndCode")}
             </span>
             <Button
               variant="ghost"

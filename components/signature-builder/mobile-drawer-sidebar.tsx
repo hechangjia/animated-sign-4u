@@ -76,7 +76,7 @@ export function MobileDrawerSidebar(
         <div
             className={cn(
                 "bg-card border-t shadow-lg transition-all duration-300 flex flex-col",
-                open ? "h-[44vh]" : "h-10",
+                open ? "h-full" : "h-10",
             )}
         >
             <button

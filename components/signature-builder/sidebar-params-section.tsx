@@ -3,6 +3,7 @@ import { SignatureState } from "@/lib/types";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { ChevronDown, Settings2 } from "lucide-react";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ParamsSectionProps {
     state: SignatureState;
@@ -10,6 +11,7 @@ interface ParamsSectionProps {
 }
 
 export function ParamsSection({ state, updateState }: ParamsSectionProps) {
+    const { t } = useI18n();
     return (
         <section className="space-y-4">
             <details open className="group">
@@ -17,14 +19,14 @@ export function ParamsSection({ state, updateState }: ParamsSectionProps) {
                     <span className="w-6 h-6 rounded bg-slate-100 text-slate-600 flex items-center justify-center">
                         <Settings2 className="w-3 h-3" />
                     </span>
-                    <span>Parameters</span>
+                    <span>{t("paramsSectionTitle")}</span>
                     <ChevronDown className="ml-auto w-3 h-3 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
                 </summary>
                 <div className="mt-3 space-y-5">
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-medium">
                             <span className="text-muted-foreground">
-                                Font Size
+                                {t("fontSizeLabel")}
                             </span>
                             <span className="text-indigo-600 font-mono">
                                 {state.fontSize}px
@@ -42,7 +44,7 @@ export function ParamsSection({ state, updateState }: ParamsSectionProps) {
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-medium">
                             <span className="text-muted-foreground">
-                                Animation Speed
+                                {t("animationSpeedLabel")}
                             </span>
                             <span className="text-indigo-600 font-mono">
                                 {state.speed}s/char

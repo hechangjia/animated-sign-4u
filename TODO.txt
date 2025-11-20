@@ -59,15 +59,28 @@ http://localhost:3000/api/sign?text=Signature&font=great-vibes&fill=multi
 5. stroke color 应该也具有和 fill mode 一样的 single/ gradient / multi 模式, 并且和 fill mode 是独立的, 从而可以自由组合
 2. 需要支持用户自定义背景 size (长*宽), 默认的背景size 就是 auto, 也就是当前的逻辑. 
    - 用户的自定义的话, 就按照用户得来.
-
-当前项目进度以及问题:
-7. 整理项目中的文件命名 / 导出风格，做一点小的 API 清理（比如统一 Props 命名、去掉不必要的 React.FC 等），让整体更统一
-8. 需要为整个界面实现 dark/light theme. 并且确保主题切换功能正常.
+12. mobile 的底部的 drawer 应该默认弹出, 并且这个 drawer 弹出后的界面也应该和 preview 之间有个 splitter, 类似于normal时 codebox 和 preivew 之间的splitter一样, 可以让用户自己控制大小
 9. 需要实现 i18n, 起码包含 英文/中文
+8. 需要为整个界面实现 dark/light theme. 并且确保主题切换功能正常.
+7. 整理项目中的文件命名 / 导出风格，做一点小的 API 清理（比如统一 Props 命名、去掉不必要的 React.FC 等），让整体更统一
+3. mobile 时的 topbar 缺少 i18n/dark/light theme button.
 10. 背景的 size 不应该和和 font size 联动,当背景的size小于font 展示的size时,
 font 超出编辑就超出了吧. 也就是 font 和 bg 应该是 z 轴上的关系, font 正好是在 bg 的中间的上面而已.
+2. font selector 的 section 也需要做i18n
+
+
+当前项目进度以及问题:
+
 11. 加了 colorMode = multi 的解析之后, 现在的 quick theme 的默认主题中 渐变颜色背景或者多种颜色的 theme 在实际 preview 时不正常了, 需要修复
-12. mobile 的底部的 drawer 应该默认弹出, 并且这个 drawer 弹出后的界面也应该和 preview 之间有个 splitter, 类似于normal时 codebox 和 preivew 之间的splitter一样, 可以让用户自己控制大小
+0. drawer 底部是否始终贴着底部（没有空白缝隙）, 不,目前还是留有底部空白
+1. Sidebar 中的 section head 也得做 i18n
+1. 我想让默认的百事主题是multi fill color, stroke color 的
+text=Signature&font=lobster&fill=multi&bg=e32934&colors=000000-000000-000000-000000-ffffff-ffffff-ffffff-ffffff-ffffff
+这个是示例.
+我看constants.ts 里仿佛还不支持默认multi mode..
+
+2. drawer 贴底问题通过 h-full 填满 ResizablePanel 解决。并没有解决(你可以使用 @chrome-devtools 来辅助你找到问题并且解决)
+3. 在mobile模式下, Pepsi,sprite 等主题配色加载不出来, 而切换为normal 模式就行了,,,,,
 
 
 1. 仔细阅读这个计划/重构/实现文档. 理清楚逻辑, 了解清楚需求, 仔细认真的对比代码. 理解当前的进度.

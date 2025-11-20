@@ -13,6 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown, PenTool } from "lucide-react";
+import { useI18n } from "@/components/i18n-provider";
 
 interface ContentFontSectionProps {
     state: SignatureState;
@@ -25,6 +26,7 @@ export function ContentFontSection({
     updateState,
     onFontUpload,
 }: ContentFontSectionProps) {
+    const { t } = useI18n();
     return (
         <section className="space-y-3">
             <details open className="group">
@@ -32,14 +34,14 @@ export function ContentFontSection({
                     <span className="w-6 h-6 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center">
                         <PenTool className="w-3 h-3" />
                     </span>
-                    <span>Content & Font</span>
+                    <span>{t("contentFontSectionTitle")}</span>
                     <ChevronDown className="ml-auto w-3 h-3 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
                 </summary>
 
                 <div className="mt-3 space-y-4">
                     <div>
                         <Label className="text-xs text-muted-foreground mb-1.5 block">
-                            Signature Text
+                            {t("signatureTextLabel")}
                         </Label>
                         <Input
                             value={state.text}
@@ -52,7 +54,7 @@ export function ContentFontSection({
 
                     <div>
                         <Label className="text-xs text-muted-foreground mb-1.5 block">
-                            Font Family
+                            {t("fontFamilyLabel")}
                         </Label>
                         <Select
                             value={state.font}
@@ -67,7 +69,9 @@ export function ContentFontSection({
                             </SelectTrigger>
                             <SelectContent className="bg-popover border-2 border-border shadow-xl max-h-[300px] overflow-y-auto">
                                 <SelectGroup>
-                                    <SelectLabel>Script</SelectLabel>
+                                    <SelectLabel>
+                                        {t("fontCategoryScript")}
+                                    </SelectLabel>
                                     {FONTS.filter((f) =>
                                         f.category.includes("Script")
                                     ).map(
@@ -83,7 +87,9 @@ export function ContentFontSection({
                                     )}
                                 </SelectGroup>
                                 <SelectGroup>
-                                    <SelectLabel>Brand</SelectLabel>
+                                    <SelectLabel>
+                                        {t("fontCategoryBrand")}
+                                    </SelectLabel>
                                     {FONTS.filter((f) =>
                                         f.category.includes("Brand")
                                     ).map(
@@ -99,7 +105,9 @@ export function ContentFontSection({
                                     )}
                                 </SelectGroup>
                                 <SelectGroup>
-                                    <SelectLabel>Local</SelectLabel>
+                                    <SelectLabel>
+                                        {t("fontCategoryLocal")}
+                                    </SelectLabel>
                                     {FONTS.filter((f) =>
                                         f.category.includes("Local")
                                     ).map(
@@ -115,12 +123,14 @@ export function ContentFontSection({
                                     )}
                                 </SelectGroup>
                                 <SelectGroup>
-                                    <SelectLabel>Custom</SelectLabel>
+                                    <SelectLabel>
+                                        {t("fontCategoryCustom")}
+                                    </SelectLabel>
                                     <SelectItem
                                         value="custom"
                                         className="bg-popover hover:bg-accent"
                                     >
-                                        Upload Font...
+                                        {t("uploadFontLabel")}
                                     </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
@@ -130,8 +140,7 @@ export function ContentFontSection({
                             id="font-upload"
                             className="hidden"
                             accept=".ttf,.otf,.woff"
-                            onChange={(e) =>
-                                e.target.files?.[0] &&
+                            onChange={(e) => e.target.files?.[0] &&
                                 onFontUpload(e.target.files[0])}
                         />
                     </div>
