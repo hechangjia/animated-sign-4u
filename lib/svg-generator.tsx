@@ -70,12 +70,6 @@ export function generateSVG(
 
   const width = viewBox.w;
   const height = viewBox.h;
-  const outputWidth = state.bgSizeMode === "custom" && state.bgWidth
-    ? state.bgWidth
-    : width;
-  const outputHeight = state.bgSizeMode === "custom" && state.bgHeight
-    ? state.bgHeight
-    : height;
   const padding = Math.max(
     0,
     Math.min(state.cardPadding ?? 0, Math.min(width, height) / 4),
@@ -90,6 +84,16 @@ export function generateSVG(
       <linearGradient id="grad-fill" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="${state.fill1}" />
         <stop offset="100%" stop-color="${state.fill2}" />
+      </linearGradient>
+    `;
+  }
+
+  // Gradient for stroke
+  if (state.strokeEnabled && state.strokeMode === "gradient") {
+    defs += `
+      <linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="${state.stroke}" />
+        <stop offset="100%" stop-color="${state.stroke2}" />
       </linearGradient>
     `;
   }
@@ -210,22 +214,41 @@ export function generateSVG(
 
   // Background rect (solid or gradient)
   let backgroundRect = "";
+  let cardRect: { x: number; y: number; w: number; h: number } | null = null;
   if (!state.bgTransparent) {
     const bgFill = state.bgMode === "gradient" && state.bg2
       ? "url(#bg-grad)"
       : state.bg;
+
+    let rectX = viewBox.x;
+    let rectY = viewBox.y;
+    let rectW = width;
+    let rectH = height;
+
+    if (state.bgSizeMode === "custom" && state.bgWidth && state.bgHeight) {
+      rectW = Math.min(state.bgWidth, width);
+      rectH = Math.min(state.bgHeight, height);
+      rectX = viewBox.x + (width - rectW) / 2;
+      rectY = viewBox.y + (height - rectH) / 2;
+    }
+
     backgroundRect =
-      `<rect x="${viewBox.x}" y="${viewBox.y}" width="${width}" height="${height}" fill="${bgFill}" />`;
+      `<rect x="${rectX}" y="${rectY}" width="${rectW}" height="${rectH}" fill="${bgFill}" />`;
+    cardRect = { x: rectX, y: rectY, w: rectW, h: rectH };
   }
 
   // Texture Overlay - fix pattern ID reference
   let textureOverlay = "";
   if (state.texture && state.texture !== "none") {
-    textureOverlay = `<rect x="${viewBox.x + padding}" y="${
-      viewBox.y + padding
-    }" width="${width - padding * 2}" height="${
-      height - padding * 2
-    }" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
+    const rect = cardRect ??
+      { x: viewBox.x, y: viewBox.y, w: width, h: height };
+    const innerX = rect.x + padding;
+    const innerY = rect.y + padding;
+    const innerW = Math.max(0, rect.w - padding * 2);
+    const innerH = Math.max(0, rect.h - padding * 2);
+
+    textureOverlay =
+      `<rect x="${innerX}" y="${innerY}" width="${innerW}" height="${innerH}" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
   }
 
   // Generate keyframes for each path (skip for static renders)
@@ -243,8 +266,8 @@ export function generateSVG(
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
       viewBox="${viewBox.x} ${viewBox.y} ${width} ${height}"
-      width="${outputWidth}"
-      height="${outputHeight}"
+      width="${width}"
+      height="${height}"
       style="background-color: transparent; border-radius: ${state.borderRadius}px;"
     >
       <defs>

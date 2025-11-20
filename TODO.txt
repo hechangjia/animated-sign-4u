@@ -43,12 +43,7 @@ http://localhost:3000/api/sign?text=Signature&font=great-vibes&fill=multi
 
 1. PNG format is not implemented yet, 需要实现
    -http://localhost:3000/api/sign?text=Signature&font=great-vibes&format=png 得到的是纯白的背景..没有签名..需要修复
-
-
-当前项目进度以及问题:
-
-2. 需要支持用户自定义背景 size (长*宽), 默认的背景size 就是 auto, 也就是当前的逻辑. 
-   - 用户的自定义的话, 就按照用户得来.
+6. api 对应 multi 的 color 看起来不支持?? 请你修复:  http://localhost:3000/api/sign?text=Signature&font=lobster&fill=multi&texture=lines&bg=e32934
 3. 需要实现 mobile 布局
     - 目前的 mobile 布局只能看到 sidebar
     - 我希望的是 mobile 布局时, sidebar 变成 底部的抽屉. 用户点击抽屉的 trigger 后弹出, 向上挤压底部空间.
@@ -62,7 +57,10 @@ http://localhost:3000/api/sign?text=Signature&font=great-vibes&fill=multi
    依次循环.
 4. top bar 上的按钮也需要做 mobile 适配, 减少文字, 避免过于拥挤等问题
 5. stroke color 应该也具有和 fill mode 一样的 single/ gradient / multi 模式, 并且和 fill mode 是独立的, 从而可以自由组合
-6. api 对应 multi 的 color 看起来不支持?? 请你修复:  http://localhost:3000/api/sign?text=Signature&font=lobster&fill=multi&texture=lines&bg=e32934
+2. 需要支持用户自定义背景 size (长*宽), 默认的背景size 就是 auto, 也就是当前的逻辑. 
+   - 用户的自定义的话, 就按照用户得来.
+
+当前项目进度以及问题:
 7. 整理项目中的文件命名 / 导出风格，做一点小的 API 清理（比如统一 Props 命名、去掉不必要的 React.FC 等），让整体更统一
 8. 需要为整个界面实现 dark/light theme. 并且确保主题切换功能正常.
 9. 需要实现 i18n, 起码包含 英文/中文

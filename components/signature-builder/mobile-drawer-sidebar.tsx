@@ -23,7 +23,7 @@ const SECTION_TITLES = [
 export function MobileDrawerSidebar(
     { state, updateState, onFontUpload }: MobileDrawerSidebarProps,
 ) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const [index, setIndex] = useState(0);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
 

@@ -7,7 +7,7 @@ import { CodePanel } from "@/components/signature-builder/code-panel";
 import { MobileDrawerSidebar } from "@/components/signature-builder/mobile-drawer-sidebar";
 import { INITIAL_STATE, THEMES } from "@/lib/constants";
 import { FillMode, SignatureState, TextureType } from "@/lib/types";
-import { ChevronDown, Download } from "lucide-react";
+import { ChevronDown, Download, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
@@ -25,12 +25,16 @@ import {
   generateReactComponent,
   generateVueComponent,
 } from "@/lib/code-generators";
+import { useTheme } from "next-themes";
+import { useI18n } from "@/components/i18n-provider";
 
 export default function SignatureBuilderPage() {
   const [state, setState] = useState<SignatureState>(INITIAL_STATE);
   const [svgCode, setSvgCode] = useState("");
   const [uploadedFont, setUploadedFont] = useState<ArrayBuffer | null>(null);
   const [isCodeOverlayOpen, setIsCodeOverlayOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const { t, locale, setLocale } = useI18n();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -89,6 +93,14 @@ export default function SignatureBuilderPage() {
 
   const updateState = (updates: Partial<SignatureState>) => {
     setState((prev) => ({ ...prev, ...updates }));
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const toggleLocale = () => {
+    setLocale(locale === "en" ? "zh" : "en");
   };
 
   const handleFontUpload = (file: File) => {
@@ -156,11 +168,31 @@ export default function SignatureBuilderPage() {
             S
           </div>
           <h1 className="text-sm font-bold tracking-tight hidden md:block">
-            Animated Signature <span className="text-indigo-600">4u</span>
+            {t("appTitle")}
           </h1>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Locale toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleLocale}
+            className="h-8 text-xs px-2 hidden sm:inline-flex"
+          >
+            {locale === "en" ? "EN" : "中文"}
+          </Button>
+
+          {/* Theme toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-8 w-8 text-xs hidden sm:inline-flex"
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
           {/* Component Download - Hover Dropdown */}
           <div className="relative group hidden md:block">
             <Button
@@ -318,18 +350,35 @@ export default function SignatureBuilderPage() {
       {/* Mobile Layout */}
       <div className="flex md:hidden flex-1 overflow-hidden">
         <main className="flex-1 flex flex-col min-w-0 min-h-0 relative bg-background">
-          <div className="flex-1 min-h-0">
-            <PreviewArea
-              state={state}
-              onSvgGenerated={setSvgCode}
-              uploadedFont={uploadedFont}
-            />
-          </div>
-          <MobileDrawerSidebar
-            state={state}
-            updateState={updateState}
-            onFontUpload={handleFontUpload}
-          />
+          <ResizablePanelGroup direction="vertical" className="flex-1 min-h-0">
+            <ResizablePanel defaultSize={60} minSize={40}>
+              <PreviewArea
+                state={state}
+                onSvgGenerated={setSvgCode}
+                uploadedFont={uploadedFont}
+              />
+            </ResizablePanel>
+
+            <ResizableHandle
+              className="relative group cursor-row-resize bg-border hover:bg-indigo-500 active:bg-indigo-600 transition-colors duration-200"
+              style={{ height: "6px", minHeight: "6px", maxHeight: "6px" }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex flex-col gap-0.5">
+                  <div className="w-8 h-0.5 bg-muted-foreground/30 rounded-full group-hover:bg-white group-hover:w-10 transition-all duration-200" />
+                  <div className="w-8 h-0.5 bg-muted-foreground/30 rounded-full group-hover:bg-white group-hover:w-10 transition-all duration-200" />
+                </div>
+              </div>
+            </ResizableHandle>
+
+            <ResizablePanel defaultSize={40} minSize={25}>
+              <MobileDrawerSidebar
+                state={state}
+                updateState={updateState}
+                onFontUpload={handleFontUpload}
+              />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </main>
       </div>
 

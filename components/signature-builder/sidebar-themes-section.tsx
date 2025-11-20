@@ -14,7 +14,13 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
         const theme = THEMES[themeName];
         if (!theme) return;
 
-        const updates: Partial<SignatureState> = { ...theme };
+        const updates: Partial<SignatureState> = {
+            ...theme,
+            // reset per-char colors unless theme explicitly defines them (rainbow)
+            charColors: [],
+            strokeCharColors: [],
+            strokeMode: theme.strokeMode ?? "single",
+        };
 
         if (theme.isRainbow) {
             const len = state.text.length;
@@ -53,12 +59,11 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
                         let cardBackground: string | undefined = theme.bg;
                         if (theme.isRainbow) {
                             const stops = DEFAULT_CHAR_COLORS.map((c, i) => {
-                                const pct =
-                                    (i /
-                                        Math.max(
-                                            DEFAULT_CHAR_COLORS.length - 1,
-                                            1,
-                                        )) *
+                                const pct = (i /
+                                    Math.max(
+                                        DEFAULT_CHAR_COLORS.length - 1,
+                                        1,
+                                    )) *
                                     100;
                                 return `${c} ${pct}%`;
                             }).join(", ");
