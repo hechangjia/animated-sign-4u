@@ -26,6 +26,7 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
         jade: "themeNameJade",
         laser: "themeNameLaser",
         rainbow: "themeNameRainbow",
+        practice: "themeNamePractice",
     };
     const applyTheme = (themeName: string) => {
         const theme = THEMES[themeName];

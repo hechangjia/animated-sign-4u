@@ -161,3 +161,32 @@ colors: fn()  一个函数, 这样的话, 就可以实现多色填充逻辑以�
 7. 遇到问题，请你上网查询解决办法积极使用各种 MCP 工具来辅助你完成相关任务
 8. 我已经给你了足够的权限,你可以进行除了递归删除,或者彻底清空的这些十分危险的操作. 你可以正常使用 shell/各种工具, 以及调用程序等等.
 9. 使用 cargo check/pnpm build/tsc xxx/vite xxx等等代码检查工具, 以及代码质量分析工具来确保项目的正确性, 可编译性. 如果出现问题, 请积极修复.
+
+
+----
+
+
+当前的问题：
+1. 新加的practice theme 名字不对，目前叫 Default，
+2. 我点击了 practice theme之后，preview 界面倒是没啥问题， 但是sidebar 中对应的控件的参数却没有同步更新。。
+3. 中文笔画渲染顺序不对， 需要修复。按笔画顺序渲染
+4. 当布局为 mobile 尺寸时
+    切换到 Qucik Theme, 然后我点击theme button, 改变主题(问题依旧....)
+    - blueprint theme, preview 区域正确渲染了字体和背景, 但是 texture 并没有渲染出来.
+    - Chinese theme, preview 区域正确渲染了字体和背景, 但是 texture 并没有渲染出来.
+    - Cyber theme, preview 区域正确渲染了字体的 stroke, 但是字体的fill, 背景和 texture 都没有渲染出来
+    - Pepsi theme, preview 区域正确渲染了字体(fill+stroke), 但是背景和 texture 都没有渲染出来
+    - Coke theme, 一切渲染正确, 
+        - 能够缩放le 
+    - sprite theme, 所有都没有渲染出来..
+    - jade theme: 没有背景, 没有 texture.
+    - laser theme, 只有 stroke 渲染出来了...
+    - rainbow theme, 渲染正确, 
+
+积极使用 windsurf 原生的 web search， shell 执行， fact context search，ide diagnose 等等功能来辅助你理解问题， 解决问题，和寻找更多资料从而能够更好的完成任务。
+4. !!!!这里没有时间限制， 也没有其他限制, 需要你遵守的只有下面的内容：     
+5. 需要不断继续的完成任务, 一般方向的重构/实现/调整等等不需要征求我的意见
+6. 保持 KISS, LISP, DRY, SOLID 等规则, 保持代码函数化, 模块化, 组件化, 保持可组合性, 保持简单. 禁止过于冗余, 并且没有用的代码请你直接删除. 避免导致代码的无效冗余.
+7. 遇到问题，请你上网查询解决办法积极使用各种 MCP 工具来辅助你完成相关任务
+8. 我已经给你了足够的权限,你可以进行除了递归删除,或者彻底清空的这些十分危险的操作. 你可以正常使用 shell/各种工具, 以及调用程序等等.
+9. 使用 cargo check/pnpm build/tsc xxx/vite xxx等等代码检查工具, 以及代码质量分析工具来确保项目的正确性, 可编译性. 如果出现问题, 请积极修复.

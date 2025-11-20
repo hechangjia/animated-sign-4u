@@ -68,6 +68,7 @@ export const messages = {
         themeNameJade: "Jade",
         themeNameLaser: "Laser",
         themeNameRainbow: "Rainbow",
+        themeNamePractice: "Practice",
 
         // Texture options
         textureNoneLabel: "None",
@@ -75,6 +76,8 @@ export const messages = {
         textureDotsLabel: "Dots",
         textureLinesLabel: "Lines",
         textureCrossLabel: "Cross",
+        textureTianzigeLabel: "Tianzige",
+        textureMizigeLabel: "Mizige",
 
         // Mode labels
         bgModeSolidLabel: "Solid",
@@ -163,6 +166,7 @@ export const messages = {
         themeNameJade: "翡翠",
         themeNameLaser: "激光",
         themeNameRainbow: "彩虹",
+        themeNamePractice: "练字",
 
         // Texture options
         textureNoneLabel: "无",
@@ -170,6 +174,8 @@ export const messages = {
         textureDotsLabel: "圆点",
         textureLinesLabel: "线条",
         textureCrossLabel: "十字",
+        textureTianzigeLabel: "田字格",
+        textureMizigeLabel: "米字格",
 
         // Mode labels
         bgModeSolidLabel: "纯色",

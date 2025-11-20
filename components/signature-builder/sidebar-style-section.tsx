@@ -193,6 +193,18 @@ export function StyleColorSection(
                                 >
                                     {t("textureCrossLabel")}
                                 </SelectItem>
+                                <SelectItem
+                                    value="tianzige"
+                                    className="bg-popover hover:bg-accent"
+                                >
+                                    {t("textureTianzigeLabel")}
+                                </SelectItem>
+                                <SelectItem
+                                    value="mizige"
+                                    className="bg-popover hover:bg-accent"
+                                >
+                                    {t("textureMizigeLabel")}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
 

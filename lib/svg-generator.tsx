@@ -7,6 +7,8 @@ export interface PathData {
   isHanzi?: boolean;
   x?: number;
   fontSize?: number;
+  strokeIndex?: number; // For Chinese characters: which stroke of the character
+  totalStrokes?: number; // For Chinese characters: total number of strokes
 }
 
 export function getTextureDefs(
@@ -203,14 +205,14 @@ export function generateSVG(
       ? state.fill1
       : state.fillMode === "gradient"
       ? "url(#grad-fill)"
-      : (state.charColors[i] || state.fill1);
+      : (state.charColors[p.index] || state.fill1);
 
     let stroke = "none";
     if (state.strokeEnabled) {
       if (state.strokeMode === "gradient") {
         stroke = "url(#grad-stroke)";
       } else if (state.strokeMode === "multi") {
-        stroke = state.strokeCharColors[i] || state.stroke;
+        stroke = state.strokeCharColors[p.index] || state.stroke;
       } else {
         stroke = state.stroke;
       }

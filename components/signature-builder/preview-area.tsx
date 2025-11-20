@@ -78,9 +78,55 @@ export function PreviewArea(
           if (state.useHanziData && char && isChinese(char)) {
             try {
               const hanziData = await fetchHanziData(char);
-              if (hanziData) {
-                d = mergeHanziStrokes(hanziData);
+              if (hanziData && hanziData.strokes.length > 0) {
                 isHanziPath = true;
+
+                // Update bounding box for the character
+                const scale = state.fontSize / 1024;
+                const baseline = 150;
+                const x1 = pathX;
+                const y1 = baseline - state.fontSize;
+                const x2 = x1 + state.fontSize;
+                const y2 = baseline;
+                minX = Math.min(minX, x1);
+                minY = Math.min(minY, y1);
+                maxX = Math.max(maxX, x2);
+                maxY = Math.max(maxY, y2);
+
+                // Create a separate path for each stroke
+                for (
+                  let strokeIdx = 0;
+                  strokeIdx < hanziData.strokes.length;
+                  strokeIdx++
+                ) {
+                  const strokePath = hanziData.strokes[strokeIdx];
+
+                  // Measure length using DOM
+                  const el = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "path",
+                  );
+                  el.setAttribute("d", strokePath);
+                  el.setAttribute(
+                    "transform",
+                    `translate(${pathX}, ${
+                      baseline - state.fontSize
+                    }) scale(${scale})`,
+                  );
+                  measureRef.current?.appendChild(el);
+                  const len = Math.ceil(el.getTotalLength());
+
+                  paths.push({
+                    d: strokePath,
+                    len,
+                    index: idx,
+                    isHanzi: true,
+                    x: pathX,
+                    fontSize: state.fontSize,
+                    strokeIndex: strokeIdx,
+                    totalStrokes: hanziData.strokes.length,
+                  });
+                }
               }
             } catch (e) {
               console.warn(
@@ -90,7 +136,7 @@ export function PreviewArea(
           }
 
           // Fallback to regular font path if not using hanzi data
-          if (!d) {
+          if (!isHanziPath) {
             const path = glyph.getPath(cursorX, 150, state.fontSize);
             d = path.toPathData(2);
 
@@ -100,49 +146,22 @@ export function PreviewArea(
               minY = Math.min(minY, bbox.y1);
               maxX = Math.max(maxX, bbox.x2);
               maxY = Math.max(maxY, bbox.y2);
-            }
-          } else {
-            // For hanzi paths, approximate bounding box based on 1024 grid
-            const scale = state.fontSize / 1024;
-            const baseline = 150;
-            const x1 = pathX;
-            const y1 = baseline - state.fontSize;
-            const x2 = x1 + state.fontSize;
-            const y2 = baseline;
-            minX = Math.min(minX, x1);
-            minY = Math.min(minY, y1);
-            maxX = Math.max(maxX, x2);
-            maxY = Math.max(maxY, y2);
-          }
 
-          if (d) {
-            // Measure length using DOM
-            const el = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "path",
-            );
-            el.setAttribute("d", d);
-            if (isHanziPath) {
-              const scale = state.fontSize / 1024;
-              const baseline = 150;
-              el.setAttribute(
-                "transform",
-                `translate(${pathX}, ${
-                  baseline - state.fontSize
-                }) scale(${scale})`,
+              // Measure length using DOM
+              const el = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path",
               );
-            }
-            measureRef.current?.appendChild(el);
-            const len = Math.ceil(el.getTotalLength());
+              el.setAttribute("d", d);
+              measureRef.current?.appendChild(el);
+              const len = Math.ceil(el.getTotalLength());
 
-            paths.push({
-              d,
-              len,
-              index: idx,
-              isHanzi: isHanziPath,
-              x: pathX,
-              fontSize: state.fontSize,
-            });
+              paths.push({
+                d,
+                len,
+                index: idx,
+              });
+            }
           }
 
           cursorX += glyph.advanceWidth * (state.fontSize / fontObj.unitsPerEm);

@@ -180,9 +180,38 @@ export async function buildPaths(font: any, state: SignatureState): Promise<{
         if (state.useHanziData && char && isChinese(char)) {
             try {
                 const hanziData = await fetchHanziData(char);
-                if (hanziData) {
-                    d = mergeHanziStrokes(hanziData);
+                if (hanziData && hanziData.strokes.length > 0) {
                     isHanziPath = true;
+                    
+                    // Update bounding box for the character
+                    const baseline = 150;
+                    const x1 = pathX;
+                    const y1 = baseline - state.fontSize;
+                    const x2 = x1 + state.fontSize;
+                    const y2 = baseline;
+                    minX = Math.min(minX, x1);
+                    minY = Math.min(minY, y1);
+                    maxX = Math.max(maxX, x2);
+                    maxY = Math.max(maxY, y2);
+
+                    // Create a separate path for each stroke
+                    for (let strokeIdx = 0; strokeIdx < hanziData.strokes.length; strokeIdx++) {
+                        const strokePath = hanziData.strokes[strokeIdx];
+                        const properties = new svgPathProperties(strokePath);
+                        const scale = state.fontSize / 1024;
+                        const len = Math.ceil(properties.getTotalLength() * scale);
+
+                        paths.push({
+                            d: strokePath,
+                            len,
+                            index: idx,
+                            isHanzi: true,
+                            x: pathX,
+                            fontSize: state.fontSize,
+                            strokeIndex: strokeIdx,
+                            totalStrokes: hanziData.strokes.length,
+                        });
+                    }
                 }
             } catch (e) {
                 console.warn(`Failed to fetch hanzi data for ${char}, falling back to font`);
@@ -190,7 +219,7 @@ export async function buildPaths(font: any, state: SignatureState): Promise<{
         }
 
         // Fallback to regular font path if not using hanzi data
-        if (!d) {
+        if (!isHanziPath) {
             const path = glyph.getPath(cursorX, 150, state.fontSize);
             d = path.toPathData(2);
 
@@ -200,38 +229,16 @@ export async function buildPaths(font: any, state: SignatureState): Promise<{
                 minY = Math.min(minY, bbox.y1);
                 maxX = Math.max(maxX, bbox.x2);
                 maxY = Math.max(maxY, bbox.y2);
+
+                const properties = new svgPathProperties(d);
+                const len = Math.ceil(properties.getTotalLength());
+
+                paths.push({
+                    d,
+                    len,
+                    index: idx,
+                });
             }
-        } else {
-            // For hanzi paths, approximate bounding box based on 1024 grid
-            const baseline = 150;
-            const x1 = pathX;
-            const y1 = baseline - state.fontSize;
-            const x2 = x1 + state.fontSize;
-            const y2 = baseline;
-            minX = Math.min(minX, x1);
-            minY = Math.min(minY, y1);
-            maxX = Math.max(maxX, x2);
-            maxY = Math.max(maxY, y2);
-        }
-
-        if (d) {
-            const properties = new svgPathProperties(d);
-            let len = Math.ceil(properties.getTotalLength());
-
-            // For hanzi paths, adjust length based on scale
-            if (isHanziPath) {
-                const scale = state.fontSize / 1024;
-                len = Math.ceil(len * scale);
-            }
-
-            paths.push({
-                d,
-                len,
-                index: idx,
-                isHanzi: isHanziPath,
-                x: pathX,
-                fontSize: state.fontSize,
-            });
         }
 
         cursorX += glyph.advanceWidth * (state.fontSize / font.unitsPerEm);
