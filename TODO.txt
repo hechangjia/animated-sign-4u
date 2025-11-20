@@ -176,12 +176,12 @@ colors: fn()  一个函数, 这样的话, 就可以实现多色填充逻辑以�
     - Chinese theme, preview 区域正确渲染了字体和背景, 但是 texture 并没有渲染出来.
     - Cyber theme, preview 区域正确渲染了字体的 stroke, 但是字体的fill, 背景和 texture 都没有渲染出来
     - Pepsi theme, preview 区域正确渲染了字体(fill+stroke), 但是背景和 texture 都没有渲染出来
-    - Coke theme, 一切渲染正确, 但是就是宽度太宽了, 背景宽度已经死死的贴住了两边.
-        - 如果能够自动缩放就好了, 希望能够支持 preview 区域的放大缩小, 但是不影响用户实际想要导出的尺寸
+    - Coke theme, 一切渲染正确, 
+        - 能够缩放le 
     - sprite theme, 所有都没有渲染出来..
     - jade theme: 没有背景, 没有 texture.
     - laser theme, 只有 stroke 渲染出来了...
-    - rainbow theme, 渲染正确, 但是就是宽度太宽了, 背景宽度已经死死的贴住了两边.
+    - rainbow theme, 渲染正确, 
 
 [成功完成]底部的 drawer 能够支持滑动切换的操作. 向左/右切换按钮能切换.
 

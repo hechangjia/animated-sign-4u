@@ -402,8 +402,16 @@ export default function SignatureBuilderPage() {
             <ResizablePanel
               ref={mobileBottomPanelRef}
               defaultSize={40}
-              minSize={10}
+              minSize={5}
               className="flex flex-col min-h-0"
+              onResize={(size) => {
+                // Track the last "usable" size for restore; ignore tiny
+                // collapsed sizes so re-open always returns to a helpful
+                // height.
+                if (size > 8) {
+                  mobileBottomLastSizeRef.current = size;
+                }
+              }}
             >
               <MobileDrawerSidebar
                 state={state}
@@ -417,13 +425,10 @@ export default function SignatureBuilderPage() {
                       const last = mobileBottomLastSizeRef.current ?? 40;
                       panel.resize?.(last);
                     } else {
-                      const currentSize = panel.getSize?.();
-                      if (typeof currentSize === "number") {
-                        mobileBottomLastSizeRef.current = currentSize;
-                      }
-                      // Shrink the panel so the preview grows, but leave enough
-                      // height for the header row.
-                      panel.resize?.(10);
+                      // Collapse down to a small strip so the preview gets
+                      // most of the height while still keeping the header
+                      // visible.
+                      panel.resize?.(6);
                     }
                   } catch {
                     // no-op
