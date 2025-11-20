@@ -11,6 +11,7 @@ interface MobileDrawerSidebarProps {
     state: SignatureState;
     updateState: (updates: Partial<SignatureState>) => void;
     onFontUpload: (file: File) => void;
+    onToggleOpen?: (open: boolean) => void;
 }
 
 const SECTION_TITLES = [
@@ -21,7 +22,8 @@ const SECTION_TITLES = [
 ];
 
 export function MobileDrawerSidebar(
-    { state, updateState, onFontUpload }: MobileDrawerSidebarProps,
+    { state, updateState, onFontUpload, onToggleOpen }:
+        MobileDrawerSidebarProps,
 ) {
     const [open, setOpen] = useState(true);
     const [index, setIndex] = useState(0);
@@ -72,17 +74,25 @@ export function MobileDrawerSidebar(
 
     const activeTitle = SECTION_TITLES[index] ?? SECTION_TITLES[0];
 
+    const toggleOpen = () => {
+        setOpen((prev) => {
+            const next = !prev;
+            onToggleOpen?.(next);
+            return next;
+        });
+    };
+
     return (
         <div
             className={cn(
                 "bg-card border-t shadow-lg transition-all duration-300 flex flex-col",
-                open ? "h-full" : "h-10",
+                "h-full",
             )}
         >
             <button
                 type="button"
                 className="h-10 flex items-center justify-between px-4 text-xs font-medium text-muted-foreground"
-                onClick={() => setOpen((o) => !o)}
+                onClick={toggleOpen}
             >
                 <span className="truncate">{activeTitle}</span>
                 <div className="flex items-center gap-2">

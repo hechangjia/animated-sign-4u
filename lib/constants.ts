@@ -314,7 +314,6 @@ export const THEMES: Record<string, ThemeConfig> = {
     useGlow: false,
     useShadow: false,
     borderRadius: 16,
-    isRainbow: true,
     charColorsFn: buildDefaultMultiColors,
     texture: "none",
   },

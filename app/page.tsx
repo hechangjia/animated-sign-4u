@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Sidebar } from "@/components/signature-builder/sidebar";
 import { PreviewArea } from "@/components/signature-builder/preview-area";
 import { CodePanel } from "@/components/signature-builder/code-panel";
@@ -14,6 +14,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,8 @@ export default function SignatureBuilderPage() {
   const [isCodeOverlayOpen, setIsCodeOverlayOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { t, locale, setLocale } = useI18n();
+
+  const mobileBottomPanelRef = useRef<ImperativePanelHandle | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -375,14 +378,33 @@ export default function SignatureBuilderPage() {
             </ResizableHandle>
 
             <ResizablePanel
+              ref={mobileBottomPanelRef}
               defaultSize={40}
-              minSize={25}
+              minSize={15}
               className="flex flex-col min-h-0"
             >
               <MobileDrawerSidebar
                 state={state}
                 updateState={updateState}
                 onFontUpload={handleFontUpload}
+                onToggleOpen={(open) => {
+                  const panel = mobileBottomPanelRef.current;
+                  if (!panel) return;
+                  if (open) {
+                    // Expand to a reasonable default when opening.
+                    try {
+                      panel.expand?.();
+                    } catch {
+                      // no-op
+                    }
+                  } else {
+                    try {
+                      panel.collapse?.();
+                    } catch {
+                      // no-op
+                    }
+                  }
+                }}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

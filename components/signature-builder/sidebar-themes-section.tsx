@@ -66,7 +66,7 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
                             theme.bg === "#f40009";
 
                         let cardBackground: string | undefined = theme.bg;
-                        if (theme.isRainbow) {
+                        if (themeKey === "rainbow") {
                             const stops = DEFAULT_CHAR_COLORS.map((c, i) => {
                                 const pct = (i /
                                     Math.max(

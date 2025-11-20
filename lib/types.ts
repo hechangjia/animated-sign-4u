@@ -47,8 +47,6 @@ export interface SignatureState {
 }
 
 export interface ThemeConfig extends Partial<SignatureState> {
-  isRainbow?: boolean;
-
   // Optional generators for multi-color themes (fill / stroke).
   // When present, both the API and the editor should use these to
   // derive per-character colors instead of inferring in UI code.

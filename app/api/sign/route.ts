@@ -236,6 +236,23 @@ export async function GET(req: NextRequest): Promise<Response> {
             });
         }
 
+        if (format === "gif") {
+            const staticSvg = generateSVG(state, paths, viewBox, {
+                staticRender: true,
+            });
+            const gifBuffer = await sharp(Buffer.from(staticSvg)).gif()
+                .toBuffer();
+            const gifArray = new Uint8Array(gifBuffer);
+
+            return new Response(gifArray, {
+                status: 200,
+                headers: {
+                    "Content-Type": "image/gif",
+                    "Cache-Control": "s-maxage=86400, immutable",
+                },
+            });
+        }
+
         if (format === "png") {
             const staticSvg = generateSVG(state, paths, viewBox, {
                 staticRender: true,
