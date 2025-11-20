@@ -11,6 +11,7 @@ import {
 } from "@/lib/constants";
 import { FillMode, SignatureState, TextureType } from "@/lib/types";
 import { generateSVG, PathData } from "@/lib/svg-generator";
+import { fetchHanziData, isChinese, mergeHanziStrokes } from "@/lib/hanzi-data";
 
 export function buildStateFromQuery(params: URLSearchParams): SignatureState {
     let state: SignatureState = { ...INITIAL_STATE };
@@ -86,9 +87,16 @@ export function buildStateFromQuery(params: URLSearchParams): SignatureState {
         "dots",
         "lines",
         "cross",
+        "tianzige",
+        "mizige",
     ];
     if (texture && allowedTextures.includes(texture)) {
         state.texture = texture;
+    }
+
+    const useHanziData = params.get("useHanziData");
+    if (useHanziData === "true" || useHanziData === "1") {
+        state.useHanziData = true;
     }
 
     if (
@@ -147,10 +155,10 @@ export async function loadFont(fontId: string): Promise<any> {
     return opentype.parse(buffer);
 }
 
-export function buildPaths(font: any, state: SignatureState): {
+export async function buildPaths(font: any, state: SignatureState): Promise<{
     paths: PathData[];
     viewBox: { x: number; y: number; w: number; h: number };
-} {
+}> {
     const text = state.text || "Demo";
     const glyphs = font.stringToGlyphs(text);
 
@@ -161,25 +169,73 @@ export function buildPaths(font: any, state: SignatureState): {
     let maxX = -Infinity;
     let maxY = -Infinity;
 
-    glyphs.forEach((glyph: any, idx: number) => {
-        const path = glyph.getPath(cursorX, 150, state.fontSize);
-        const d = path.toPathData(2);
+    for (let idx = 0; idx < glyphs.length; idx++) {
+        const glyph = glyphs[idx];
+        const char = text[idx];
+        let d = "";
+        let isHanziPath = false;
+        const pathX = cursorX;
+
+        // Check if we should use hanzi-writer-data for this character
+        if (state.useHanziData && char && isChinese(char)) {
+            try {
+                const hanziData = await fetchHanziData(char);
+                if (hanziData) {
+                    d = mergeHanziStrokes(hanziData);
+                    isHanziPath = true;
+                }
+            } catch (e) {
+                console.warn(`Failed to fetch hanzi data for ${char}, falling back to font`);
+            }
+        }
+
+        // Fallback to regular font path if not using hanzi data
+        if (!d) {
+            const path = glyph.getPath(cursorX, 150, state.fontSize);
+            d = path.toPathData(2);
+
+            if (d) {
+                const bbox = path.getBoundingBox();
+                minX = Math.min(minX, bbox.x1);
+                minY = Math.min(minY, bbox.y1);
+                maxX = Math.max(maxX, bbox.x2);
+                maxY = Math.max(maxY, bbox.y2);
+            }
+        } else {
+            // For hanzi paths, approximate bounding box based on 1024 grid
+            const baseline = 150;
+            const x1 = pathX;
+            const y1 = baseline - state.fontSize;
+            const x2 = x1 + state.fontSize;
+            const y2 = baseline;
+            minX = Math.min(minX, x1);
+            minY = Math.min(minY, y1);
+            maxX = Math.max(maxX, x2);
+            maxY = Math.max(maxY, y2);
+        }
 
         if (d) {
             const properties = new svgPathProperties(d);
-            const len = Math.ceil(properties.getTotalLength());
-            const bbox = path.getBoundingBox();
+            let len = Math.ceil(properties.getTotalLength());
 
-            minX = Math.min(minX, bbox.x1);
-            minY = Math.min(minY, bbox.y1);
-            maxX = Math.max(maxX, bbox.x2);
-            maxY = Math.max(maxY, bbox.y2);
+            // For hanzi paths, adjust length based on scale
+            if (isHanziPath) {
+                const scale = state.fontSize / 1024;
+                len = Math.ceil(len * scale);
+            }
 
-            paths.push({ d, len, index: idx });
+            paths.push({
+                d,
+                len,
+                index: idx,
+                isHanzi: isHanziPath,
+                x: pathX,
+                fontSize: state.fontSize,
+            });
         }
 
         cursorX += glyph.advanceWidth * (state.fontSize / font.unitsPerEm);
-    });
+    }
 
     if (paths.length === 0) {
         return {
@@ -217,7 +273,7 @@ export async function GET(req: NextRequest): Promise<Response> {
 
         const state = buildStateFromQuery(params);
         const font = await loadFont(state.font);
-        const { paths, viewBox } = buildPaths(font, state);
+        const { paths, viewBox } = await buildPaths(font, state);
 
         if (paths.length === 0) {
             return new Response("No paths generated", { status: 400 });

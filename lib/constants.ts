@@ -54,7 +54,7 @@ export const FONTS = [
     label: "Ma Shan Zheng",
     value: "ma-shan-zheng",
     url:
-      "https://cdn.jsdelivr.net/npm/@fontsource/ma-shan-zheng@5.0.13/files/ma-shan-zheng-latin-400-normal.woff",
+      "https://cdn.jsdelivr.net/npm/@fontsource/ma-shan-zheng@5.0.13/files/ma-shan-zheng-chinese-simplified-400-normal.woff",
     category: "Local",
   },
   {
@@ -316,6 +316,26 @@ export const THEMES: Record<string, ThemeConfig> = {
     borderRadius: 16,
     charColorsFn: buildDefaultMultiColors,
     texture: "none",
+  },
+  practice: {
+    bg: "#fef5f5",
+    bg2: "#fef5f5",
+    bgMode: "solid",
+    bgTransparent: false,
+    stroke: "#d9534f",
+    strokeEnabled: true,
+    fillMode: "single",
+    fill1: "#d9534f",
+    font: "ma-shan-zheng",
+    useGlow: false,
+    useShadow: false,
+    borderRadius: 8,
+    texture: "mizige",
+    texColor: "#e6b8b8",
+    texOpacity: 0.6,
+    texSize: 120,
+    texThickness: 1.5,
+    useHanziData: true,
   },
 };
 

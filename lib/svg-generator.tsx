@@ -4,6 +4,9 @@ export interface PathData {
   d: string;
   len: number;
   index: number;
+  isHanzi?: boolean;
+  x?: number;
+  fontSize?: number;
 }
 
 export function getTextureDefs(
@@ -54,6 +57,26 @@ export function getTextureDefs(
     } L ${s / 4} ${
       s * 0.75
     }" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
+      </pattern>
+    `;
+  }
+  if (type === "tianzige") {
+    // 田字格: outer box + center cross lines
+    const half = s / 2;
+    return `
+      <pattern id="texture-tianzige" x="0" y="0" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+        <rect width="${s}" height="${s}" fill="none" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
+        <path d="M${half} 0 L${half} ${s} M0 ${half} L${s} ${half}" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}" stroke-dasharray="3,3"/>
+      </pattern>
+    `;
+  }
+  if (type === "mizige") {
+    // 米字格: tianzige + diagonal lines
+    const half = s / 2;
+    return `
+      <pattern id="texture-mizige" x="0" y="0" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+        <rect width="${s}" height="${s}" fill="none" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
+        <path d="M0 0 L${s} ${s} M${s} 0 L0 ${s} M${half} 0 L${half} ${s} M0 ${half} L${s} ${half}" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}" stroke-dasharray="3,3"/>
       </pattern>
     `;
   }
@@ -204,6 +227,17 @@ export function generateSVG(
             draw-${i} ${duration}s ease-out forwards ${delay}s, 
             fill-fade-${i} 0.8s ease-out forwards ${delay + duration * 0.6}s;`;
 
+    // For Chinese characters using hanzi-writer-data, apply coordinate transformation
+    let transformAttr = "";
+    if (p.isHanzi && p.x !== undefined && p.fontSize !== undefined) {
+      const scale = p.fontSize / 1024;
+      const baseline = 150;
+      // Transform: translate to position, move up by fontSize, then scale from 1024 to fontSize
+      transformAttr = `transform="translate(${p.x}, ${
+        baseline - p.fontSize
+      }) scale(${scale})"`;
+    }
+
     pathElements += `
       <path 
         d="${p.d}" 
@@ -213,6 +247,7 @@ export function generateSVG(
         stroke-linecap="round" 
         stroke-linejoin="round"
         ${filterList ? `filter="${filterList}"` : ""}
+        ${transformAttr}
         class="sig-path"
         style="
           stroke-dasharray: ${p.len}; 

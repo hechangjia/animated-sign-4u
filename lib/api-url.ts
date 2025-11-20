@@ -41,6 +41,10 @@ export function buildSignApiUrl(
         params.set("colors", colors.join("-"));
     }
 
+    if (state.useHanziData) {
+        params.set("useHanziData", "true");
+    }
+
     if (options.format) {
         params.set("format", options.format);
     }

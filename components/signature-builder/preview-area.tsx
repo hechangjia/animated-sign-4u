@@ -5,6 +5,7 @@ import { FONTS } from "@/lib/constants";
 import opentype from "opentype.js";
 import { Loader2, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetchHanziData, isChinese, mergeHanziStrokes } from "@/lib/hanzi-data";
 
 interface PreviewAreaProps {
   state: SignatureState;
@@ -50,7 +51,7 @@ export function PreviewArea(
   useEffect(() => {
     if (!fontObj || !measureRef.current) return;
 
-    const generate = () => {
+    const generate = async () => {
       try {
         const glyphs = fontObj.stringToGlyphs(state.text || "Demo");
         let paths: PathData[] = [];
@@ -65,9 +66,54 @@ export function PreviewArea(
           measureRef.current.removeChild(measureRef.current.firstChild);
         }
 
-        glyphs.forEach((glyph: any, idx: number) => {
-          const path = glyph.getPath(cursorX, 150, state.fontSize);
-          const d = path.toPathData(2);
+        // Process each glyph and check if we should use hanzi stroke data
+        for (let idx = 0; idx < glyphs.length; idx++) {
+          const glyph = glyphs[idx];
+          const char = state.text[idx];
+          let d = "";
+          let isHanziPath = false;
+          let pathX = cursorX;
+
+          // Check if we should use hanzi-writer-data for this character
+          if (state.useHanziData && char && isChinese(char)) {
+            try {
+              const hanziData = await fetchHanziData(char);
+              if (hanziData) {
+                d = mergeHanziStrokes(hanziData);
+                isHanziPath = true;
+              }
+            } catch (e) {
+              console.warn(
+                `Failed to fetch hanzi data for ${char}, falling back to font`,
+              );
+            }
+          }
+
+          // Fallback to regular font path if not using hanzi data
+          if (!d) {
+            const path = glyph.getPath(cursorX, 150, state.fontSize);
+            d = path.toPathData(2);
+
+            if (d) {
+              const bbox = path.getBoundingBox();
+              minX = Math.min(minX, bbox.x1);
+              minY = Math.min(minY, bbox.y1);
+              maxX = Math.max(maxX, bbox.x2);
+              maxY = Math.max(maxY, bbox.y2);
+            }
+          } else {
+            // For hanzi paths, approximate bounding box based on 1024 grid
+            const scale = state.fontSize / 1024;
+            const baseline = 150;
+            const x1 = pathX;
+            const y1 = baseline - state.fontSize;
+            const x2 = x1 + state.fontSize;
+            const y2 = baseline;
+            minX = Math.min(minX, x1);
+            minY = Math.min(minY, y1);
+            maxX = Math.max(maxX, x2);
+            maxY = Math.max(maxY, y2);
+          }
 
           if (d) {
             // Measure length using DOM
@@ -76,20 +122,31 @@ export function PreviewArea(
               "path",
             );
             el.setAttribute("d", d);
+            if (isHanziPath) {
+              const scale = state.fontSize / 1024;
+              const baseline = 150;
+              el.setAttribute(
+                "transform",
+                `translate(${pathX}, ${
+                  baseline - state.fontSize
+                }) scale(${scale})`,
+              );
+            }
             measureRef.current?.appendChild(el);
             const len = Math.ceil(el.getTotalLength());
 
-            const bbox = path.getBoundingBox();
-            minX = Math.min(minX, bbox.x1);
-            minY = Math.min(minY, bbox.y1);
-            maxX = Math.max(maxX, bbox.x2);
-            maxY = Math.max(maxY, bbox.y2);
-
-            paths.push({ d, len, index: idx });
+            paths.push({
+              d,
+              len,
+              index: idx,
+              isHanzi: isHanziPath,
+              x: pathX,
+              fontSize: state.fontSize,
+            });
           }
 
           cursorX += glyph.advanceWidth * (state.fontSize / fontObj.unitsPerEm);
-        });
+        }
 
         if (paths.length === 0) {
           setSvgContent("");

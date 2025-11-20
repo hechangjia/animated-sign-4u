@@ -97,9 +97,16 @@ export default function SignatureBuilderPage() {
         "dots",
         "lines",
         "cross",
+        "tianzige",
+        "mizige",
       ];
       if (texture && allowedTextures.includes(texture)) {
         next.texture = texture;
+      }
+
+      const useHanziData = params.get("useHanziData");
+      if (useHanziData === "true" || useHanziData === "1") {
+        next.useHanziData = true;
       }
 
       return next;

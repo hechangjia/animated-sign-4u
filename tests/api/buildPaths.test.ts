@@ -30,13 +30,13 @@ const fakeFont = {
 };
 
 describe("buildPaths", () => {
-    it("generates paths and viewBox from glyphs", () => {
+    it("generates paths and viewBox from glyphs", async () => {
         const state: SignatureState = {
             ...(INITIAL_STATE as SignatureState),
             text: "AB",
         };
 
-        const { paths, viewBox } = buildPaths(fakeFont as any, state);
+        const { paths, viewBox } = await buildPaths(fakeFont as any, state);
 
         expect(paths.length).toBe(2);
         for (const p of paths) {
