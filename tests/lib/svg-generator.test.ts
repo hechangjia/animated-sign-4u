@@ -248,3 +248,66 @@ describe("generateSVG - stroke modes", () => {
         expect(svg).toContain('stroke="#00ff00"');
     });
 });
+
+// 回归测试：确保为不同布局（desktop / mobile）生成的 SVG 使用互不冲突的 id。
+// 背景：曾经在页面中同时挂载两个 PreviewArea（桌面 + 移动预览）时，
+// 它们的 <defs> / <filter> / <linearGradient> 等使用相同的 id，
+// 导致移动端预览在部分浏览器中出现背景、纹理、动画错乱。
+// 通过为每个实例传入 idPrefix（例如 "desktop-" / "mobile-"），
+// 可以让每个 SVG 拥有独立的“命名空间”，从而彻底解决该问题。
+describe("generateSVG - idPrefix scoping", () => {
+    const baseViewBox = { x: 0, y: 0, w: 200, h: 100 };
+    const simplePaths: PathData[] = [
+        { d: "M0 0 L10 0", len: 10, index: 0 },
+    ];
+
+    it("applies idPrefix to background gradient and keeps ids distinct per instance", () => {
+        const state: SignatureState = {
+            ...(INITIAL_STATE as SignatureState),
+            bgTransparent: false,
+            bgMode: "gradient",
+            bg: "#111111",
+            bg2: "#222222",
+        };
+
+        const desktopSvg = generateSVG(state, simplePaths, baseViewBox, {
+            idPrefix: "desktop-",
+        });
+        const mobileSvg = generateSVG(state, simplePaths, baseViewBox, {
+            idPrefix: "mobile-",
+        });
+
+        expect(desktopSvg).toContain('id="desktop-bg-grad"');
+        expect(desktopSvg).toContain('fill="url(#desktop-bg-grad)"');
+        expect(mobileSvg).toContain('id="mobile-bg-grad"');
+        expect(mobileSvg).toContain('fill="url(#mobile-bg-grad)"');
+
+        // When idPrefix is provided, we should not leak bare bg-grad ids.
+        expect(desktopSvg).not.toContain('id="bg-grad"');
+        expect(mobileSvg).not.toContain('id="bg-grad"');
+
+        // Ensure desktop/mobile instances don't accidentally share the same ids.
+        expect(desktopSvg).not.toContain('id="mobile-bg-grad"');
+        expect(mobileSvg).not.toContain('id="desktop-bg-grad"');
+    });
+
+    it("prefixes texture pattern ids so multiple SVGs can coexist safely", () => {
+        const state: SignatureState = {
+            ...(INITIAL_STATE as SignatureState),
+            bgTransparent: false,
+            texture: "grid",
+            texColor: "#123456",
+            texSize: 20,
+            texOpacity: 0.6,
+            texThickness: 1,
+            cardPadding: 10,
+        };
+
+        const svg = generateSVG(state, simplePaths, baseViewBox, {
+            idPrefix: "mobile-",
+        });
+
+        expect(svg).toContain('id="mobile-texture-grid"');
+        expect(svg).toContain('fill="url(#mobile-texture-grid)"');
+    });
+});
