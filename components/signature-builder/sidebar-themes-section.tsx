@@ -181,6 +181,36 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
                                         }}
                                     />
                                 )}
+                                {theme.texture === "cross" && (
+                                    <div
+                                        className="absolute inset-0 opacity-20"
+                                        style={{
+                                            backgroundImage:
+                                                `linear-gradient(45deg, ${theme.texColor} 1px, transparent 1px), linear-gradient(-45deg, ${theme.texColor} 1px, transparent 1px)`,
+                                            backgroundSize: "10px 10px",
+                                        }}
+                                    />
+                                )}
+                                {theme.texture === "tianzige" && (
+                                    <div
+                                        className="absolute inset-0 opacity-20"
+                                        style={{
+                                            backgroundImage:
+                                                `linear-gradient(${theme.texColor} 1px, transparent 1px), linear-gradient(90deg, ${theme.texColor} 1px, transparent 1px)`,
+                                            backgroundSize: "16px 16px",
+                                        }}
+                                    />
+                                )}
+                                {theme.texture === "mizige" && (
+                                    <div
+                                        className="absolute inset-0 opacity-20"
+                                        style={{
+                                            backgroundImage:
+                                                `linear-gradient(${theme.texColor} 1px, transparent 1px), linear-gradient(90deg, ${theme.texColor} 1px, transparent 1px), linear-gradient(45deg, ${theme.texColor} 1px, transparent 1px), linear-gradient(-45deg, ${theme.texColor} 1px, transparent 1px)`,
+                                            backgroundSize: "16px 16px",
+                                        }}
+                                    />
+                                )}
 
                                 {/* Theme name with better contrast */}
                                 <span

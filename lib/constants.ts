@@ -244,6 +244,7 @@ export const THEMES: Record<string, ThemeConfig> = {
     texOpacity: 0.4,
     texSize: 25,
     texThickness: 3,
+    useHanziData: true,
   },
   cyber: {
     bg: "#0f172a",

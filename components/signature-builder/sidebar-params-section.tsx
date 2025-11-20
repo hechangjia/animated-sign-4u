@@ -45,7 +45,7 @@ export function ParamsSection({ state, updateState }: ParamsSectionProps) {
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-medium">
                             <span className="text-muted-foreground">
-                                字符间距
+                                {t("charSpacingLabel")}
                             </span>
                             <span className="text-indigo-600 font-mono">
                                 {state.charSpacing}px
@@ -81,10 +81,10 @@ export function ParamsSection({ state, updateState }: ParamsSectionProps) {
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="text-xs text-muted-foreground">
-                                汉字笔画模式
+                                {t("hanziStrokeModeLabel")}
                             </Label>
                             <p className="text-[10px] text-muted-foreground/70">
-                                按笔画顺序绘制中文字符
+                                {t("hanziStrokeModeDescription")}
                             </p>
                         </div>
                         <Switch

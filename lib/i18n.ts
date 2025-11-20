@@ -28,6 +28,9 @@ export const messages = {
         // Parameters labels
         fontSizeLabel: "Font Size",
         animationSpeedLabel: "Animation Speed",
+        charSpacingLabel: "Character Spacing",
+        hanziStrokeModeLabel: "Chinese Stroke Mode",
+        hanziStrokeModeDescription: "Draw Chinese characters stroke by stroke",
 
         // Style & Color labels
         cardBackgroundLabel: "Card Background",
@@ -126,6 +129,9 @@ export const messages = {
         // Parameters labels
         fontSizeLabel: "字体大小",
         animationSpeedLabel: "动画速度",
+        charSpacingLabel: "字符间距",
+        hanziStrokeModeLabel: "汉字笔画模式",
+        hanziStrokeModeDescription: "按笔画顺序绘制中文字符",
 
         // Style & Color labels
         cardBackgroundLabel: "卡片背景",
