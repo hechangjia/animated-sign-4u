@@ -11,17 +11,46 @@ interface PreviewAreaProps {
   state: SignatureState;
   onSvgGenerated: (svg: string) => void;
   uploadedFont: ArrayBuffer | null;
+  idPrefix?: string;
 }
 
 export function PreviewArea(
-  { state, onSvgGenerated, uploadedFont }: PreviewAreaProps,
+  { state, onSvgGenerated, uploadedFont, idPrefix = "" }: PreviewAreaProps,
 ) {
   const [loading, setLoading] = useState(false);
   const [svgContent, setSvgContent] = useState("");
   const [fontObj, setFontObj] = useState<any | null>(null);
   const [zoom, setZoom] = useState(1);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const measureRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Update container size using ResizeObserver
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const updateSize = () => {
+      if (containerRef.current) {
+        // Get the size of the container element itself
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({ width: rect.width, height: rect.height });
+      }
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(containerRef.current);
+
+    // Also observe the SVG content if it exists (for accurate shadow on content)
+    // We need to find the inner div that scales
+    const innerDiv = containerRef.current.querySelector("div");
+    if (innerDiv) {
+      observer.observe(innerDiv);
+    }
+
+    return () => observer.disconnect();
+  }, [svgContent, zoom]); // Re-bind when content changes to observe new inner elements
 
   // Load Font
   useEffect(() => {
@@ -193,7 +222,7 @@ export function PreviewArea(
           h: (maxY - minY) + (p * 2),
         };
 
-        const svg = generateSVG(state, paths, viewBox);
+        const svg = generateSVG(state, paths, viewBox, { idPrefix });
 
         // Debug logging for mobile issues
         if (window.innerWidth < 768) {
@@ -249,9 +278,17 @@ export function PreviewArea(
           onClick={replay}
           style={{
             borderRadius: state.borderRadius,
-            boxShadow: state.bgTransparent
-              ? undefined
-              : "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            boxShadow: state.bgTransparent ? undefined : (() => {
+              // 自适应阴影大小，基于容器尺寸
+              const baseSize = Math.min(
+                containerSize.width,
+                containerSize.height,
+              );
+              const shadowY = Math.max(10, baseSize * 0.1);
+              const shadowBlur = Math.max(20, baseSize * 0.2);
+              const shadowSpread = Math.max(-5, -baseSize * 0.05);
+              return `0 ${shadowY}px ${shadowBlur}px ${shadowSpread}px rgba(0, 0, 0, 0.25)`;
+            })(),
           }}
         >
           {loading

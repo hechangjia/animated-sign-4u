@@ -360,6 +360,7 @@ export default function SignatureBuilderPage() {
                 state={state}
                 onSvgGenerated={setSvgCode}
                 uploadedFont={uploadedFont}
+                idPrefix="desktop-"
               />
             </ResizablePanel>
 
@@ -391,6 +392,7 @@ export default function SignatureBuilderPage() {
                 state={state}
                 onSvgGenerated={setSvgCode}
                 uploadedFont={uploadedFont}
+                idPrefix="mobile-"
               />
             </ResizablePanel>
 

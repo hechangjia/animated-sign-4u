@@ -19,6 +19,7 @@ export function getTextureDefs(
   thickness: number = 1,
   patternX: number = 0,
   patternY: number = 0,
+  idPrefix: string = "",
 ): string {
   // Use "size" directly as the pattern tile size in SVG units so that
   // slider values map intuitively to visual density (10 = fine, 100 = coarse),
@@ -29,17 +30,18 @@ export function getTextureDefs(
   const t = thickness;
   const px = patternX;
   const py = patternY;
+  const id = `${idPrefix}texture-${type}`;
 
   if (type === "grid") {
     return `
-      <pattern id="texture-grid" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <path d="M ${s} 0 L 0 0 0 ${s}" fill="none" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
       </pattern>
     `;
   }
   if (type === "dots") {
     return `
-      <pattern id="texture-dots" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <circle cx="${s / 2}" cy="${s / 2}" r="${
       t * 1.5
     }" fill="${c}" fill-opacity="${o}"/>
@@ -48,7 +50,7 @@ export function getTextureDefs(
   }
   if (type === "lines") {
     return `
-      <pattern id="texture-lines" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <path d="M 0 ${s / 2} L ${s} ${
       s / 2
     }" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
@@ -57,7 +59,7 @@ export function getTextureDefs(
   }
   if (type === "cross") {
     return `
-      <pattern id="texture-cross" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <path d="M ${s / 4} ${s / 4} L ${s * 0.75} ${s * 0.75} M ${s * 0.75} ${
       s / 4
     } L ${s / 4} ${
@@ -70,7 +72,7 @@ export function getTextureDefs(
     // 田字格: outer box + center cross lines
     const half = s / 2;
     return `
-      <pattern id="texture-tianzige" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <rect width="${s}" height="${s}" fill="none" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
         <path d="M${half} 0 L${half} ${s} M0 ${half} L${s} ${half}" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}" stroke-dasharray="3,3"/>
       </pattern>
@@ -80,7 +82,7 @@ export function getTextureDefs(
     // 米字格: tianzige + diagonal lines
     const half = s / 2;
     return `
-      <pattern id="texture-mizige" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
+      <pattern id="${id}" x="${px}" y="${py}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">
         <rect width="${s}" height="${s}" fill="none" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}"/>
         <path d="M0 0 L${s} ${s} M${s} 0 L0 ${s} M${half} 0 L${half} ${s} M0 ${half} L${s} ${half}" stroke="${c}" stroke-width="${t}" stroke-opacity="${o}" stroke-dasharray="3,3"/>
       </pattern>
@@ -93,9 +95,10 @@ export function generateSVG(
   state: SignatureState,
   paths: PathData[],
   viewBox: { x: number; y: number; w: number; h: number },
-  options?: { staticRender?: boolean },
+  options?: { staticRender?: boolean; idPrefix?: string },
 ): string {
   const staticRender = options?.staticRender ?? false;
+  const idPrefix = options?.idPrefix ?? "";
 
   // Canvas dimensions can grow beyond the original glyph viewBox when a
   // custom background card is larger. This keeps font metrics independent
@@ -122,7 +125,7 @@ export function generateSVG(
   // Gradients for fill
   if (state.fillMode === "gradient") {
     defs += `
-      <linearGradient id="grad-fill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="${idPrefix}grad-fill" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="${state.fill1}" />
         <stop offset="100%" stop-color="${state.fill2}" />
       </linearGradient>
@@ -132,17 +135,7 @@ export function generateSVG(
   // Gradient for stroke
   if (state.strokeEnabled && state.strokeMode === "gradient") {
     defs += `
-      <linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="${state.stroke}" />
-        <stop offset="100%" stop-color="${state.stroke2}" />
-      </linearGradient>
-    `;
-  }
-
-  // Gradient for stroke
-  if (state.strokeEnabled && state.strokeMode === "gradient") {
-    defs += `
-      <linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="${idPrefix}grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="${state.stroke}" />
         <stop offset="100%" stop-color="${state.stroke2}" />
       </linearGradient>
@@ -154,7 +147,7 @@ export function generateSVG(
     !state.bgTransparent && state.bgMode === "gradient" && state.bg && state.bg2
   ) {
     defs += `
-      <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="${idPrefix}bg-grad" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="${state.bg}" />
         <stop offset="100%" stop-color="${state.bg2}" />
       </linearGradient>
@@ -164,7 +157,7 @@ export function generateSVG(
   // Filters
   if (state.useGlow) {
     defs += `
-      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <filter id="${idPrefix}glow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
         <feMerge>
           <feMergeNode in="coloredBlur"/>
@@ -176,7 +169,7 @@ export function generateSVG(
 
   if (state.useShadow) {
     defs += `
-      <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <filter id="${idPrefix}shadow" x="-50%" y="-50%" width="200%" height="200%">
         <feDropShadow dx="4" dy="4" stdDeviation="3" flood-opacity="0.6"/>
       </filter>
     `;
@@ -193,6 +186,7 @@ export function generateSVG(
       state.texThickness,
       0,
       0,
+      idPrefix,
     );
   }
 
@@ -201,23 +195,32 @@ export function generateSVG(
   let currentDelay = 0;
   const speed = state.speed || 0.5;
 
+  // Use paths directly to ensure correct order (generation order is correct)
   paths.forEach((p, i) => {
     const duration = (p.len / 300) / speed;
     const delay = currentDelay;
     if (!staticRender) {
-      currentDelay += duration * 0.7; // Overlap for smooth flow
+      // For Chinese characters, add more delay between strokes for clearer animation
+      if (
+        p.isHanzi && i > 0 && paths[i - 1].isHanzi &&
+        paths[i - 1].index === p.index
+      ) {
+        currentDelay += duration * 0.9; // Less overlap for Chinese strokes
+      } else {
+        currentDelay += duration * 0.7; // Normal overlap
+      }
     }
 
     const fill = state.fillMode === "single"
       ? state.fill1
       : state.fillMode === "gradient"
-      ? "url(#grad-fill)"
+      ? `url(#${idPrefix}grad-fill)`
       : (state.charColors[p.index] || state.fill1);
 
     let stroke = "none";
     if (state.strokeEnabled) {
       if (state.strokeMode === "gradient") {
-        stroke = "url(#grad-stroke)";
+        stroke = `url(#${idPrefix}grad-stroke)`;
       } else if (state.strokeMode === "multi") {
         stroke = state.strokeCharColors[p.index] || state.stroke;
       } else {
@@ -226,15 +229,17 @@ export function generateSVG(
     }
     const strokeWidth = state.strokeEnabled ? 2 : 0;
     const filterList = [
-      state.useGlow ? "url(#glow)" : "",
-      state.useShadow ? "url(#shadow)" : "",
+      state.useGlow ? `url(#${idPrefix}glow)` : "",
+      state.useShadow ? `url(#${idPrefix}shadow)` : "",
     ].filter(Boolean).join(" ");
 
     const strokeDashoffset = staticRender ? 0 : p.len;
     const fillOpacity = staticRender ? 1 : 0;
     const animationStyle = staticRender ? "" : `animation: 
-            draw-${i} ${duration}s ease-out forwards ${delay}s, 
-            fill-fade-${i} 0.8s ease-out forwards ${delay + duration * 0.6}s;`;
+            ${idPrefix}draw-${i} ${duration}s ease-out forwards ${delay}s, 
+            ${idPrefix}fill-fade-${i} 0.8s ease-out forwards ${
+      delay + duration * 0.6
+    }s;`;
 
     // For Chinese characters using hanzi-writer-data, apply coordinate transformation
     let transformAttr = "";
@@ -273,7 +278,7 @@ export function generateSVG(
   let cardRect: { x: number; y: number; w: number; h: number } | null = null;
   if (!state.bgTransparent) {
     const bgFill = state.bgMode === "gradient" && state.bg2
-      ? "url(#bg-grad)"
+      ? `url(#${idPrefix}bg-grad)`
       : state.bg;
 
     let rectW = canvasWidth;
@@ -293,7 +298,7 @@ export function generateSVG(
     cardRect = { x: rectX, y: rectY, w: rectW, h: rectH };
   }
 
-  // Texture Overlay - fix pattern ID reference
+  // Texture Overlay - add a texture-class for CSS styling
   let textureOverlay = "";
   if (state.texture && state.texture !== "none") {
     const rect = cardRect ?? {
@@ -307,8 +312,16 @@ export function generateSVG(
     const innerW = Math.max(0, rect.w - padding * 2);
     const innerH = Math.max(0, rect.h - padding * 2);
 
+    // Add both pattern fill (for desktop) and a class for CSS fallback (for mobile)
     textureOverlay =
-      `<rect x="${innerX}" y="${innerY}" width="${innerW}" height="${innerH}" fill="url(#texture-${state.texture})" pointer-events="none"/>`;
+      `<rect x="${innerX}" y="${innerY}" width="${innerW}" height="${innerH}" 
+             fill="url(#${idPrefix}texture-${state.texture})" 
+             class="texture-overlay texture-${state.texture}" 
+             data-texture="${state.texture}"
+             data-color="${state.texColor}"
+             data-size="${state.texSize}"
+             data-opacity="${state.texOpacity}"
+             pointer-events="none"/>`;
   }
 
   // Generate keyframes for each path (skip for static renders)
@@ -316,11 +329,16 @@ export function generateSVG(
   if (!staticRender) {
     paths.forEach((p, i) => {
       keyframes += `
-        @keyframes draw-${i} { to { stroke-dashoffset: 0; } }
-        @keyframes fill-fade-${i} { to { fill-opacity: 1; } }
+        @keyframes ${idPrefix}draw-${i} { to { stroke-dashoffset: 0; } }
+        @keyframes ${idPrefix}fill-fade-${i} { to { fill-opacity: 1; } }
       `;
     });
   }
+
+  // CSS styles for texture overlay fallback (mobile compatibility)
+  // Note: Removed CSS fallback as it was incorrectly applying background-image to SVG rects
+  // and hiding the actual SVG pattern on mobile.
+  let textureStyles = "";
 
   // Debug logging for mobile issues
   if (typeof window !== "undefined" && window.innerWidth < 768) {
@@ -330,31 +348,21 @@ export function generateSVG(
       hasBackgroundRect: backgroundRect.length > 0,
       hasTextureOverlay: textureOverlay.length > 0,
       texture: state.texture,
-      patternX: viewBox.x,
-      patternY: viewBox.y,
     });
   }
 
-  return `
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="${viewBox.x} ${viewBox.y} ${canvasWidth} ${canvasHeight}"
-      width="${canvasWidth}"
-      height="${canvasHeight}"
-      style="display: block; max-width: 100%; height: auto;"
-    >
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox.x} ${viewBox.y} ${canvasWidth} ${canvasHeight}" width="${canvasWidth}" height="${canvasHeight}" style="display: block; max-width: 100%; height: auto;">
       <defs>
         ${defs}
         <style>
           ${keyframes}
-          .sig-path {
-            animation-fill-mode: forwards;
-          }
+          ${textureStyles}
         </style>
       </defs>
       ${backgroundRect}
       ${textureOverlay}
-      <g transform="translate(${offsetX}, ${offsetY})">${pathElements}</g>
-    </svg>
-  `;
+      <g transform="translate(0, 0)">
+      ${pathElements}
+      </g>
+    </svg>`;
 }
