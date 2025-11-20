@@ -1,4 +1,4 @@
-import React, { TouchEvent, useState } from "react";
+import React, { PointerEvent, TouchEvent, useState } from "react";
 import { SignatureState } from "@/lib/types";
 import { ContentFontSection } from "./sidebar-content-section";
 import { ParamsSection } from "./sidebar-params-section";
@@ -23,6 +23,7 @@ export function MobileDrawerSidebar(
     const [open, setOpen] = useState(true);
     const [index, setIndex] = useState(0);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
+    const [pointerStartX, setPointerStartX] = useState<number | null>(null);
 
     const sections = [
         <ContentFontSection
@@ -79,6 +80,21 @@ export function MobileDrawerSidebar(
         setTouchStartX(null);
     };
 
+    const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType === "mouse" || e.pointerType === "pen") {
+            setPointerStartX(e.clientX);
+        }
+    };
+
+    const handlePointerUp = (e: PointerEvent<HTMLDivElement>) => {
+        if (pointerStartX == null) return;
+        const dx = e.clientX - pointerStartX;
+        const threshold = 40;
+        if (dx < -threshold) next();
+        if (dx > threshold) prev();
+        setPointerStartX(null);
+    };
+
     const activeTitleKey = sectionTitleKeys[index] ?? sectionTitleKeys[0];
     const activeTitle = t(activeTitleKey);
 
@@ -126,6 +142,9 @@ export function MobileDrawerSidebar(
                         className="flex-1 min-h-0 overflow-hidden"
                         onTouchStart={handleTouchStart}
                         onTouchEnd={handleTouchEnd}
+                        onPointerDown={handlePointerDown}
+                        onPointerUp={handlePointerUp}
+                        onPointerLeave={handlePointerUp}
                     >
                         <div
                             className="flex h-full transition-transform duration-300 ease-out"

@@ -49,6 +49,7 @@ export default function SignatureBuilderPage() {
   const { t, locale, setLocale } = useI18n();
 
   const mobileBottomPanelRef = useRef<ImperativePanelHandle | null>(null);
+  const mobileBottomLastSizeRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -401,13 +402,33 @@ export default function SignatureBuilderPage() {
             <ResizablePanel
               ref={mobileBottomPanelRef}
               defaultSize={40}
-              minSize={15}
+              minSize={10}
               className="flex flex-col min-h-0"
             >
               <MobileDrawerSidebar
                 state={state}
                 updateState={updateState}
                 onFontUpload={handleFontUpload}
+                onToggleOpen={(open) => {
+                  const panel = mobileBottomPanelRef.current;
+                  if (!panel) return;
+                  try {
+                    if (open) {
+                      const last = mobileBottomLastSizeRef.current ?? 40;
+                      panel.resize?.(last);
+                    } else {
+                      const currentSize = panel.getSize?.();
+                      if (typeof currentSize === "number") {
+                        mobileBottomLastSizeRef.current = currentSize;
+                      }
+                      // Shrink the panel so the preview grows, but leave enough
+                      // height for the header row.
+                      panel.resize?.(10);
+                    }
+                  } catch {
+                    // no-op
+                  }
+                }}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

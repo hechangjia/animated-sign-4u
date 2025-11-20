@@ -1,6 +1,6 @@
 import React from "react";
 import { SignatureState } from "@/lib/types";
-import { DEFAULT_CHAR_COLORS, THEMES } from "@/lib/constants";
+import { DEFAULT_CHAR_COLORS, INITIAL_STATE, THEMES } from "@/lib/constants";
 import { ChevronDown, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/components/i18n-provider";
@@ -31,7 +31,19 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
         const theme = THEMES[themeName];
         if (!theme) return;
 
-        const updates: Partial<SignatureState> = {
+        // Start from a clean visual baseline so that previous Style & Color
+        // tweaks (card padding, textures, transparency, etc.) do not leak
+        // into the new theme.
+        const base: SignatureState = {
+            ...(INITIAL_STATE as SignatureState),
+            // Preserve user content and core drawing metrics.
+            text: state.text,
+            fontSize: state.fontSize,
+            speed: state.speed,
+        };
+
+        const next: SignatureState = {
+            ...base,
             ...theme,
             // reset per-char colors; theme-level generators will re-populate
             charColors: [],
@@ -45,20 +57,20 @@ export function ThemesSection({ state, updateState }: ThemesSectionProps) {
 
         // Use theme-level generators for multi modes when provided.
         if (theme.charColorsFn && theme.fillMode === "multi") {
-            updates.charColors = theme.charColorsFn(state.text);
+            next.charColors = theme.charColorsFn(state.text);
         }
 
         if (theme.strokeCharColorsFn && theme.strokeMode === "multi") {
-            updates.strokeCharColors = theme.strokeCharColorsFn(state.text);
+            next.strokeCharColors = theme.strokeCharColorsFn(state.text);
         } else if (
             !theme.strokeCharColorsFn && theme.charColorsFn &&
             theme.strokeMode === "multi"
         ) {
             // If stroke is multi but only a fill pattern is defined, reuse it.
-            updates.strokeCharColors = theme.charColorsFn(state.text);
+            next.strokeCharColors = theme.charColorsFn(state.text);
         }
 
-        updateState(updates);
+        updateState(next);
     };
 
     return (

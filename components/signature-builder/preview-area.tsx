@@ -18,6 +18,7 @@ export function PreviewArea(
   const [loading, setLoading] = useState(false);
   const [svgContent, setSvgContent] = useState("");
   const [fontObj, setFontObj] = useState<any | null>(null);
+  const [zoom, setZoom] = useState(1);
   const measureRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -170,8 +171,44 @@ export function PreviewArea(
               <div
                 dangerouslySetInnerHTML={{ __html: svgContent }}
                 className="transition-transform duration-300"
+                style={{
+                  transform: `scale(${zoom})`,
+                  transformOrigin: "center center",
+                }}
               />
             )}
+
+          {!loading && svgContent && (
+            <div className="absolute right-3 top-3 flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-background/90 backdrop-blur px-2 py-1 rounded-full shadow-sm border">
+              <button
+                type="button"
+                className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoom((z) =>
+                    Math.max(0.5, Math.round((z - 0.25) * 100) / 100)
+                  );
+                }}
+              >
+                -
+              </button>
+              <span className="tabular-nums w-10 text-center">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                type="button"
+                className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoom((z) =>
+                    Math.min(2, Math.round((z + 0.25) * 100) / 100)
+                  );
+                }}
+              >
+                +
+              </button>
+            </div>
+          )}
 
           {!loading && svgContent && (
             <div className="absolute -bottom-10 left-0 w-full text-center transition-opacity opacity-0 group-hover:opacity-100">
