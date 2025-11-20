@@ -179,38 +179,6 @@ export function PreviewArea(
             )}
 
           {!loading && svgContent && (
-            <div className="absolute right-3 top-3 flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-background/90 backdrop-blur px-2 py-1 rounded-full shadow-sm border">
-              <button
-                type="button"
-                className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setZoom((z) =>
-                    Math.max(0.5, Math.round((z - 0.25) * 100) / 100)
-                  );
-                }}
-              >
-                -
-              </button>
-              <span className="tabular-nums w-10 text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-              <button
-                type="button"
-                className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setZoom((z) =>
-                    Math.min(2, Math.round((z + 0.25) * 100) / 100)
-                  );
-                }}
-              >
-                +
-              </button>
-            </div>
-          )}
-
-          {!loading && svgContent && (
             <div className="absolute -bottom-10 left-0 w-full text-center transition-opacity opacity-0 group-hover:opacity-100">
               <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground bg-background/90 backdrop-blur px-3 py-1.5 rounded-full shadow-sm border">
                 <RefreshCw className="w-3 h-3" /> Click to Replay
@@ -219,6 +187,38 @@ export function PreviewArea(
           )}
         </div>
       </div>
+
+      {!loading && svgContent && (
+        <div className="pointer-events-none absolute bottom-4 right-4 z-10">
+          <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-background/90 backdrop-blur px-2 py-1 rounded-full shadow-sm border pointer-events-auto">
+            <button
+              type="button"
+              className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoom((z) =>
+                  Math.max(0.5, Math.round((z - 0.25) * 100) / 100)
+                );
+              }}
+            >
+              -
+            </button>
+            <span className="tabular-nums w-10 text-center">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              className="w-5 h-5 flex items-center justify-center rounded-full border border-border bg-background hover:bg-muted transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoom((z) => Math.min(2, Math.round((z + 0.25) * 100) / 100));
+              }}
+            >
+              +
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
