@@ -48,7 +48,7 @@ export function ParamsSection({ state, updateState }: ParamsSectionProps) {
                                 {t("charSpacingLabel")}
                             </span>
                             <span className="text-indigo-600 font-mono">
-                                {state.charSpacing}px
+                                {state.charSpacing.toFixed(0)}%
                             </span>
                         </div>
                         <Slider

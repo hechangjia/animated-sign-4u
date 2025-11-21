@@ -154,7 +154,7 @@ export interface SignatureState {
   font: string;
   fontSize: number;
   speed: number;           // 速度系数：值越大 = 动画越快
-  charSpacing: number;     // 基础字符间距，支持语言感知
+  charSpacing: number;     // 相对字符间距因子（-100..100）
 
   // 背景卡片
   bg: string;
@@ -485,7 +485,7 @@ return <svg ...>{defs}{background}{texture}{groupOfPaths}</svg>;
 - **几何与动画**
   - `fontSize`：数字
   - `speed`：动画**速度因子**（`> 0`，越大 = 越快）
-  - `charSpacing`：基础字符间距（后续应用语言感知缩放）
+  - `charSpacing`：相对字符间距因子（以字宽百分比表示，-100..100）
   - `borderRadius`：卡片圆角半径
   - `cardPadding`：文本与卡片边缘之间的内边距
 
@@ -671,26 +671,25 @@ switch (formatParam) {
 - 特殊处理以避免水平滑动与滑块冲突：
   - 若指针/触摸起始于滑块（`[data-slot="slider"]`），则禁止滑动切换分区。
 
-### 6.4 字符间距（语言感知）
+### 6.4 字符间距（相对因子）
 
-UI 与 API 使用相同函数将 `state.charSpacing` 转换为实际间距：
+UI 与 API 将 `state.charSpacing` 视为范围为 `-100..100` 的**相对字符间距因子**，按单个字形的前进宽度百分比生效：
 
 ```ts
-const baseSpacing = state.charSpacing || 0;
-let spacing = baseSpacing;
+const baseAdvance = glyph.advanceWidth * (state.fontSize / font.unitsPerEm);
+const factor = Math.max(-1, Math.min(1, (state.charSpacing || 0) / 100));
+const spacing = baseAdvance * factor;
 
-if (baseSpacing !== 0 && char && isChinese(char)) {
-  // 汉字视觉上更宽；调整缩放
-  spacing = baseSpacing > 0 ? baseSpacing / 5 : baseSpacing * 5;
-}
+cursorX += baseAdvance + spacing;
 ```
 
-- **拉丁文本**间距按原样应用。
-- **汉字**：
-  - 间距为负时放大（×5），以便快速压缩文本。
-  - 间距为正时缩小（÷5），避免间隙过大。
+- `charSpacing = 0`：仅使用字体本身的前进宽度，不额外加间距。
+- `charSpacing > 0`：按字宽比例增加额外间距，数值越大，相邻字符越疏。
+- `charSpacing < 0`：按字宽比例减小间距，甚至可以让字符互相重叠。
 
-`tests/api/char-spacing.test.ts` 中的单元测试确保此逻辑按预期工作。
+由于间距与每个字形自身的前进宽度成正比，拉丁字符与汉字会被统一处理，较宽的字形自然获得更大的绝对间距。
+
+`tests/api/char-spacing.test.ts` 中的单元测试验证了对英文与中文文本，正向间距因子都会让整体宽度增加。
 
 ### 6.5 动画速度（越大 = 越快）
 

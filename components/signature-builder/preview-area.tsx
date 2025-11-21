@@ -209,16 +209,12 @@ export function PreviewArea(
             }
           }
 
-          const baseSpacing = s.charSpacing || 0;
-          let spacing = baseSpacing;
-          if (baseSpacing !== 0 && char) {
-            if (isChinese(char)) {
-              spacing = baseSpacing > 0 ? baseSpacing / 5 : baseSpacing * 5;
-            }
-          }
+          const baseAdvance = glyph.advanceWidth *
+            (s.fontSize / fontObj.unitsPerEm);
+          const factor = Math.max(-1, Math.min(1, (s.charSpacing || 0) / 100));
+          const spacing = baseAdvance * factor;
 
-          cursorX += glyph.advanceWidth * (s.fontSize / fontObj.unitsPerEm) +
-            spacing;
+          cursorX += baseAdvance + spacing;
         }
 
         if (paths.length === 0) {

@@ -3,10 +3,7 @@ import opentype from "opentype.js";
 import { svgPathProperties } from "svg-path-properties";
 import sharp from "sharp";
 
-import {
-    FONTS,
-    INITIAL_STATE,
-} from "@/lib/constants";
+import { FONTS, INITIAL_STATE } from "@/lib/constants";
 import { SignatureState } from "@/lib/types";
 import { generateSVG, PathData } from "@/lib/svg-generator";
 import { fetchHanziData, isChinese } from "@/lib/hanzi-data";
@@ -126,16 +123,15 @@ export async function buildPaths(font: any, state: SignatureState): Promise<{
             }
         }
 
-        const baseSpacing = state.charSpacing || 0;
-        let spacing = baseSpacing;
-        if (baseSpacing !== 0 && char) {
-            if (isChinese(char)) {
-                spacing = baseSpacing > 0 ? baseSpacing / 5 : baseSpacing * 5;
-            }
-        }
+        const baseAdvance = glyph.advanceWidth *
+            (state.fontSize / font.unitsPerEm);
+        const factor = Math.max(
+            -1,
+            Math.min(1, (state.charSpacing || 0) / 100),
+        );
+        const spacing = baseAdvance * factor;
 
-        cursorX += glyph.advanceWidth * (state.fontSize / font.unitsPerEm) +
-            spacing;
+        cursorX += baseAdvance + spacing;
     }
 
     if (paths.length === 0) {

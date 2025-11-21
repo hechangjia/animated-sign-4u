@@ -168,37 +168,37 @@ HTTP API 通过单一端点对外提供服务：
 
 以下是重要参数的精简列表。所有参数均为可选；未指定的字段回退到 `INITIAL_STATE` 或主题默认值。
 
-| 参数                   | 类型/值                                                        | 描述                                        |
-| ---------------------- | -------------------------------------------------------------- | ------------------------------------------- |
-| `text`                 | 字符串                                                         | 签名文本                                    |
-| `font`                 | 字符串（字体 id）                                              | 来自 `lib/constants.ts` 中 `FONTS` 的字体键 |
-| `theme`                | 字符串                                                         | 来自 `THEMES` 的主题键                      |
-| `format`               | `svg`（默认）\|`png`\|`gif`\|`json`                            | 输出格式                                    |
-| `fontSize`             | 大于 0 的数字                                                  | 字体大小                                    |
-| `speed`                | 大于 0 的数字                                                  | 动画速度**系数**（值越大 = 越快）           |
-| `charSpacing`          | 数字                                                           | 基础字符间距（语言感知缩放）                |
-| `fill`                 | `single`\|`gradient`\|`multi`                                  | 填充模式                                    |
-| `fill1` / `fill2`      | 颜色（如 `ff0000` 或 `#ff0000`）                               | 主/次填充颜色                               |
-| `colors`               | `c1-c2-...`                                                    | 逐字符填充颜色（启用多色模式）              |
-| `stroke` / `stroke2`   | 颜色                                                           | 描边颜色                                    |
-| `strokeMode`           | `single`\|`gradient`\|`multi`                                  | 描边模式                                    |
-| `strokeEnabled`        | `0`/`1`/`false`/`true`                                         | 开关描边                                    |
-| `bg`                   | `transparent` 或颜色                                           | 背景颜色/透明度                             |
-| `bgMode`               | `solid`\|`gradient`                                            | 背景模式                                    |
-| `bg2`                  | 颜色                                                           | 渐变副色                                    |
-| `bgSizeMode`           | `auto`\|`custom`                                               | 自动卡片尺寸或固定卡片尺寸                  |
-| `bgWidth` / `bgHeight` | 大于 0 的数字                                                  | 自定义卡片尺寸（居中）                      |
-| `borderRadius`         | 大于等于 0 的数字                                              | 卡片圆角半径                                |
-| `cardPadding`          | 大于等于 0 的数字                                              | 纹理叠加使用的内边距                        |
-| `texture`              | `none`\|`grid`\|`dots`\|`lines`\|`cross`\|`tianzige`\|`mizige` | 纹理叠加类型                                |
-| `texColor`             | 颜色                                                           | 纹理颜色                                    |
-| `texSize`              | 大于 0 的数字                                                  | 纹理缩放                                    |
-| `texThickness`         | 大于 0 的数字                                                  | 纹理线宽                                    |
-| `texOpacity`           | 0 到 1                                                         | 纹理透明度                                  |
-| `useGlow`              | `0`/`1`/`false`/`true`                                         | 启用发光效果                                |
-| `useShadow`            | `0`/`1`/`false`/`true`                                         | 启用阴影效果                                |
-| `useHanziData`         | `0`/`1`/`false`/`true`                                         | 对汉字使用笔画数据                          |
-| `linkFillStroke`       | `0`/`1`/`false`/`true`                                         | 使描边跟随填充模式/颜色                     |
+| 参数                   | 类型/值                                                        | 描述                                            |
+| ---------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
+| `text`                 | 字符串                                                         | 签名文本                                        |
+| `font`                 | 字符串（字体 id）                                              | 来自 `lib/constants.ts` 中 `FONTS` 的字体键     |
+| `theme`                | 字符串                                                         | 来自 `THEMES` 的主题键                          |
+| `format`               | `svg`（默认）\|`png`\|`gif`\|`json`                            | 输出格式                                        |
+| `fontSize`             | 大于 0 的数字                                                  | 字体大小                                        |
+| `speed`                | 大于 0 的数字                                                  | 动画速度**系数**（值越大 = 越快）               |
+| `charSpacing`          | 数字                                                           | 相对字符间距因子（以字宽百分比表示，-100..100） |
+| `fill`                 | `single`\|`gradient`\|`multi`                                  | 填充模式                                        |
+| `fill1` / `fill2`      | 颜色（如 `ff0000` 或 `#ff0000`）                               | 主/次填充颜色                                   |
+| `colors`               | `c1-c2-...`                                                    | 逐字符填充颜色（启用多色模式）                  |
+| `stroke` / `stroke2`   | 颜色                                                           | 描边颜色                                        |
+| `strokeMode`           | `single`\|`gradient`\|`multi`                                  | 描边模式                                        |
+| `strokeEnabled`        | `0`/`1`/`false`/`true`                                         | 开关描边                                        |
+| `bg`                   | `transparent` 或颜色                                           | 背景颜色/透明度                                 |
+| `bgMode`               | `solid`\|`gradient`                                            | 背景模式                                        |
+| `bg2`                  | 颜色                                                           | 渐变副色                                        |
+| `bgSizeMode`           | `auto`\|`custom`                                               | 自动卡片尺寸或固定卡片尺寸                      |
+| `bgWidth` / `bgHeight` | 大于 0 的数字                                                  | 自定义卡片尺寸（居中）                          |
+| `borderRadius`         | 大于等于 0 的数字                                              | 卡片圆角半径                                    |
+| `cardPadding`          | 大于等于 0 的数字                                              | 纹理叠加使用的内边距                            |
+| `texture`              | `none`\|`grid`\|`dots`\|`lines`\|`cross`\|`tianzige`\|`mizige` | 纹理叠加类型                                    |
+| `texColor`             | 颜色                                                           | 纹理颜色                                        |
+| `texSize`              | 大于 0 的数字                                                  | 纹理缩放                                        |
+| `texThickness`         | 大于 0 的数字                                                  | 纹理线宽                                        |
+| `texOpacity`           | 0 到 1                                                         | 纹理透明度                                      |
+| `useGlow`              | `0`/`1`/`false`/`true`                                         | 启用发光效果                                    |
+| `useShadow`            | `0`/`1`/`false`/`true`                                         | 启用阴影效果                                    |
+| `useHanziData`         | `0`/`1`/`false`/`true`                                         | 对汉字使用笔画数据                              |
+| `linkFillStroke`       | `0`/`1`/`false`/`true`                                         | 使描边跟随填充模式/颜色                         |
 
 > 关于完整的最新默认值，请参见 `lib/state-from-query.ts` 中的 `buildStateFromQuery`。
 

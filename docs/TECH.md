@@ -156,7 +156,7 @@ export interface SignatureState {
   font: string;
   fontSize: number;
   speed: number;           // Speed factor: higher = faster animation
-  charSpacing: number;     // Base character spacing, language-aware
+  charSpacing: number;     // Relative character spacing factor (-100..100)
 
   // Background card
   bg: string;
@@ -487,7 +487,7 @@ Important query parameters (names and semantics):
 - **Geometry & animation**
   - `fontSize`: number
   - `speed`: animation **speed factor** (`> 0`, larger = faster)
-  - `charSpacing`: base character spacing (language-aware scaling is applied later)
+  - `charSpacing`: relative character spacing factor (percentage of glyph advance width, -100..100)
   - `borderRadius`: card corner radius
   - `cardPadding`: inner padding between text and card edges
 
@@ -673,26 +673,25 @@ The mobile drawer implements:
 - Special handling to avoid conflicts between horizontal swipes and sliders:
   - If a pointer/touch starts on a slider (`[data-slot="slider"]`), swipe-to-change-section is suppressed.
 
-### 6.4 Character Spacing (Language-Aware)
+### 6.4 Character Spacing (Relative Factor)
 
-Both UI and API use the same function to transform `state.charSpacing` into actual spacing per character:
+Both UI and API interpret `state.charSpacing` as a **relative spacing factor** in the range `-100..100`, expressed as a percentage of each glyph's advance width:
 
 ```ts
-const baseSpacing = state.charSpacing || 0;
-let spacing = baseSpacing;
+const baseAdvance = glyph.advanceWidth * (state.fontSize / font.unitsPerEm);
+const factor = Math.max(-1, Math.min(1, (state.charSpacing || 0) / 100));
+const spacing = baseAdvance * factor;
 
-if (baseSpacing !== 0 && char && isChinese(char)) {
-  // Chinese characters are visually wider; adjust scaling
-  spacing = baseSpacing > 0 ? baseSpacing / 5 : baseSpacing * 5;
-}
+cursorX += baseAdvance + spacing;
 ```
 
-- For **Latin text**, spacing is applied as-is.
-- For **Chinese characters**:
-  - When spacing is negative, it is magnified (×5) so you can quickly compress the text.
-  - When spacing is positive, it is reduced (÷5) to avoid overly large gaps.
+- `charSpacing = 0` → no extra spacing beyond the font's own advance width.
+- `charSpacing > 0` → characters are pushed further apart, proportionally to their width.
+- `charSpacing < 0` → characters are pulled closer together or can overlap.
 
-Unit tests in `tests/api/char-spacing.test.ts` ensure this logic behaves as intended.
+Because spacing is relative to the glyph's own advance width, Latin and Chinese characters are treated uniformly and wider glyphs naturally receive more absolute spacing.
+
+Unit tests in `tests/api/char-spacing.test.ts` ensure this factor affects total width as expected for both Latin and Chinese text.
 
 ### 6.5 Animation Speed (Larger = Faster)
 
