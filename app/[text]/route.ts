@@ -15,13 +15,16 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export async function GET(
     req: NextRequest,
-    { params }: { params: { text: string } },
+    _context: { params: { text: string } | Promise<{ text: string }> },
 ): Promise<Response> {
     try {
         const url = new URL(req.url);
         const search = new URLSearchParams(url.search);
 
-        const raw = params.text || "";
+        // Derive the path segment directly from the request URL so we do not
+        // rely on Next.js dynamic params being synchronous.
+        const pathname = url.pathname || "/";
+        const raw = pathname.startsWith("/") ? pathname.slice(1) : pathname;
         let decodedText = raw;
         try {
             decodedText = decodeURIComponent(raw);

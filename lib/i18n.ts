@@ -103,6 +103,8 @@ export const messages = {
         shareButtonLabel: "Share",
         shareCopiedMessage: "Share URL copied to clipboard.",
         sharePromptLabel: "Copy this URL to share:",
+        shareCopyLabel: "Copy link",
+        shareNativeLabel: "Share",
 
         // Download menu labels
         downloadPngLabel: "PNG Image",
@@ -210,6 +212,8 @@ export const messages = {
         shareButtonLabel: "分享",
         shareCopiedMessage: "分享链接已复制到剪贴板。",
         sharePromptLabel: "复制此链接进行分享：",
+        shareCopyLabel: "复制链接",
+        shareNativeLabel: "系统分享",
 
         // Download menu labels
         downloadPngLabel: "PNG 图片",

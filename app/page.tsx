@@ -11,6 +11,7 @@ import { buildStateFromQuery } from "@/lib/state-from-query";
 import {
   ChevronDown,
   Code2,
+  Copy,
   Download,
   FileCode2,
   FileImage,
@@ -58,9 +59,10 @@ export default function SignatureBuilderPage() {
     if (typeof window === "undefined") return;
 
     const search = window.location.search;
-    if (!search || search === "?") return;
+    const rawSearch = search.startsWith("?") ? search.slice(1) : search;
+    if (!rawSearch) return;
 
-    const params = new URLSearchParams(search);
+    const params = new URLSearchParams(rawSearch);
     if ([...params.keys()].length === 0) return;
 
     setState(() => buildStateFromQuery(params));
@@ -196,6 +198,22 @@ export default function SignatureBuilderPage() {
     URL.revokeObjectURL(url);
   };
 
+  const copyShareUrl = async (url: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(url);
+        return;
+      } catch {
+        // Fall through to prompt
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line no-alert
+      window.prompt(t("sharePromptLabel"), url);
+    }
+  };
+
   const handleShare = async () => {
     try {
       const url = buildShareUrl(state);
@@ -208,27 +226,22 @@ export default function SignatureBuilderPage() {
           });
           return;
         } catch {
-          // Fall through to clipboard/prompt on user cancellation or error
+          // Fall through to copy/prompt on user cancellation or error
         }
       }
 
-      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-        try {
-          await navigator.clipboard.writeText(url);
-          // eslint-disable-next-line no-alert
-          alert(t("shareCopiedMessage"));
-          return;
-        } catch {
-          // Fall through to prompt
-        }
-      }
-
-      if (typeof window !== "undefined") {
-        // eslint-disable-next-line no-alert
-        window.prompt(t("sharePromptLabel"), url);
-      }
+      await copyShareUrl(url);
     } catch {
       // no-op – sharing should never break the main UI
+    }
+  };
+
+  const handleCopyShareUrl = async () => {
+    try {
+      const url = buildShareUrl(state);
+      await copyShareUrl(url);
+    } catch {
+      // no-op – copying should never break the main UI
     }
   };
 
@@ -333,16 +346,67 @@ export default function SignatureBuilderPage() {
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
 
-          {/* Share current configuration */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleShare}
-            className="h-8 w-8 text-xs inline-flex"
-            aria-label={t("shareButtonLabel")}
-          >
-            <Share2 className="h-4 w-4" />
-          </Button>
+          {/* Share current configuration - mobile: click to open menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="h-8 w-8 text-xs inline-flex md:hidden"
+                aria-label={t("shareButtonLabel")}
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40 md:hidden">
+              <DropdownMenuItem
+                className="text-xs flex items-center gap-2"
+                onClick={handleCopyShareUrl}
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>{t("shareCopyLabel")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-xs flex items-center gap-2"
+                onClick={handleShare}
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>{t("shareNativeLabel")}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Share current configuration - desktop: hover to reveal menu */}
+          <div className="relative group hidden md:block">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="h-8 w-8 text-xs inline-flex"
+              aria-label={t("shareButtonLabel")}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <div className="absolute right-0 mt-2 w-40 bg-popover rounded-xl shadow-2xl border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+              <div className="p-1">
+                <button
+                  type="button"
+                  onClick={handleCopyShareUrl}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition text-left"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>{t("shareCopyLabel")}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md transition text-left"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>{t("shareNativeLabel")}</span>
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* GitHub repo link */}
           <Button
