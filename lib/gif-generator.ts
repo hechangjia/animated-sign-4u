@@ -84,17 +84,16 @@ export async function generateAnimatedGIF(
       { idPrefix: `frame${i}-` },
     );
 
-    // Convert SVG to PNG buffer
-    const pngBuffer = await sharp(Buffer.from(svgString))
-      .resize(targetWidth, targetHeight, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toBuffer();
+    // Convert SVG directly to raw RGBA buffer for GIF encoder
+    const { data } = await sharp(Buffer.from(svgString))
+        .resize(targetWidth, targetHeight, {
+            fit: "contain",
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .ensureAlpha()
+        .raw()
+        .toBuffer({ resolveWithObject: true });
 
-    // Convert PNG to raw RGBA buffer for GIF encoder
-    const { data } = await sharp(pngBuffer)
-      .ensureAlpha()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
 
     // Add frame to encoder
     encoder.addFrame(data);
