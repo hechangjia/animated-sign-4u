@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeAll } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { generateAnimatedGIF } from "@/lib/gif-generator";
 import { PathData } from "@/lib/svg-generator";
 import { INITIAL_STATE } from "@/lib/constants";

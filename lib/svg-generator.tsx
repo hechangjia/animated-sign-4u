@@ -299,7 +299,7 @@ export function generateSVG(
   const totalCycleDuration = totalDrawDuration + holdDuration + totalDrawDuration + pauseDuration;
 
   // Use paths directly to ensure correct order (generation order is correct)
-  paths.forEach((p, i) => {
+  paths.forEach((p) => {
     const timing = timings.get(p);
     const drawDuration = timing?.duration ?? ((p.len / 300) * charDuration);
     const drawDelay = timing?.delay ?? 0;

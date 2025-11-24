@@ -91,7 +91,7 @@ export async function generateAnimatedGIF(
       .toBuffer();
 
     // Convert PNG to raw RGBA buffer for GIF encoder
-    const { data, info } = await sharp(pngBuffer)
+    const { data } = await sharp(pngBuffer)
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
